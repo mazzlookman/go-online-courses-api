@@ -1,6 +1,52 @@
 package auth
 
+import (
+	"errors"
+	"github.com/golang-jwt/jwt/v4"
+	"go-pzn-restful-api/helper"
+)
+
+var secretKey = []byte(helper.GetEnv("SECRET_KEY"))
+
 type JwtAuth interface {
-	GenerateJwtToken()
-	ValidateJwtToken()
+	GenerateJwtToken(userID int) (string, error)
+	ValidateJwtToken(token string) (*jwt.Token, error)
+}
+
+type JwtAuthImpl struct {
+}
+
+func NewJwtAuthImpl() JwtAuth {
+	return &JwtAuthImpl{}
+}
+
+func (j *JwtAuthImpl) GenerateJwtToken(userID int) (string, error) {
+	mapClaims := jwt.MapClaims{}
+	mapClaims["user_id"] = userID
+
+	tokenWithHeader := jwt.NewWithClaims(jwt.SigningMethodHS256, mapClaims)
+
+	signedToken, err := tokenWithHeader.SignedString(secretKey)
+	if err != nil {
+		return "", err
+	}
+
+	return signedToken, nil
+}
+
+func (j *JwtAuthImpl) ValidateJwtToken(token string) (*jwt.Token, error) {
+	parseToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("Invalid token")
+		}
+
+		return secretKey, nil
+	})
+
+	if err != nil {
+		return parseToken, err
+	}
+
+	return parseToken, nil
 }
