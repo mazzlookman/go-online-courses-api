@@ -5,7 +5,7 @@ import (
 	"go-pzn-restful-api/model/web"
 )
 
-func ToResponseUser(user domain.User) web.UserResponse {
+func ToUserResponse(user domain.User) web.UserResponse {
 	return web.UserResponse{
 		ID:     user.ID,
 		Name:   user.Name,

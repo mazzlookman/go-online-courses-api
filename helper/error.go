@@ -5,3 +5,11 @@ func PanicIfError(err error) {
 		panic(err)
 	}
 }
+
+type NotFoundError struct {
+	Error string
+}
+
+func NewNotFoundError(error string) NotFoundError {
+	return NotFoundError{Error: error}
+}

@@ -26,6 +26,8 @@ func NewRouter() *gin.Engine {
 	v1 := router.Group("/api/v1")
 
 	v1.POST("/users", userController.Register)
+	v1.GET("/users/:userID", userController.GetByID)
+	v1.POST("/users/login", userController.Login)
 
 	return router
 }

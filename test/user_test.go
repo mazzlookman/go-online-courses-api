@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-pzn-restful-api/app"
+	"go-pzn-restful-api/repository"
 	"io"
 	"net/http/httptest"
 	"strings"
@@ -31,4 +32,14 @@ func TestUserRegister(t *testing.T) {
 	fmt.Println(mapResponse)
 	assert.Equal(t, 200, response.StatusCode)
 	assert.Equal(t, "Aqib", mapResponse["data"].(map[string]interface{})["name"])
+}
+
+func TestFindByEmailRepo(t *testing.T) {
+	userRepository := repository.NewUserRepository(app.DBConnection())
+	user, err := userRepository.FindByEmail("ucuptest.com")
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(user)
 }

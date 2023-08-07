@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
@@ -12,8 +13,30 @@ type UserServiceImpl struct {
 	repository.UserRepository
 }
 
-func (s *UserServiceImpl) Login() {
+func (s *UserServiceImpl) FindByID(userID int) web.UserResponse {
+	findByID, err := s.UserRepository.FindByID(userID)
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
 
+	return helper.ToUserResponse(findByID)
+}
+
+func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
+	findByEmail, err := s.UserRepository.FindByEmail(input.Email)
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(findByEmail.Password), []byte(input.Password))
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
+	}
+
+	findByEmail.Token = "token"
+	update := s.UserRepository.Update(findByEmail)
+
+	return helper.ToUserResponse(update)
 }
 
 func (s *UserServiceImpl) Register(input web.UserRegisterInput) web.UserResponse {
@@ -28,17 +51,7 @@ func (s *UserServiceImpl) Register(input web.UserRegisterInput) web.UserResponse
 	save := s.UserRepository.Save(domainUser)
 	helper.PanicIfError(err)
 
-	return helper.ToResponseUser(save)
-}
-
-func (s *UserServiceImpl) FindByID() {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (s *UserServiceImpl) Logout() {
-	//TODO implement me
-	panic("implement me")
+	return helper.ToUserResponse(save)
 }
 
 func NewUserService(userRepository repository.UserRepository) UserService {

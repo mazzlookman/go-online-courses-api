@@ -3,8 +3,8 @@ package service
 import "go-pzn-restful-api/model/web"
 
 type UserService interface {
-	Login()
+	Login(input web.UserLoginInput) web.UserResponse
 	Register(input web.UserRegisterInput) web.UserResponse
-	FindByID()
-	Logout()
+	FindByID(userID int) web.UserResponse
+	//UploadAvatar()
 }
