@@ -16,7 +16,7 @@ type JwtAuth interface {
 type JwtAuthImpl struct {
 }
 
-func NewJwtAuthImpl() JwtAuth {
+func NewJwtAuth() JwtAuth {
 	return &JwtAuthImpl{}
 }
 

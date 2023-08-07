@@ -5,7 +5,6 @@ import (
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/service"
-	"strconv"
 )
 
 type UserControllerImpl struct {
@@ -14,9 +13,8 @@ type UserControllerImpl struct {
 
 func (c *UserControllerImpl) GetByID(ctx *gin.Context) {
 	// user_id from token
-	param := ctx.Param("userID")
-	userID, _ := strconv.Atoi(param)
-	findByID := c.UserService.FindByID(userID)
+	user := ctx.MustGet("currentUser").(web.UserResponse)
+	findByID := c.UserService.FindByID(user.ID)
 	ctx.JSON(
 		200,
 		helper.APIResponse(200, "Current user: "+findByID.Name, findByID),

@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"go-pzn-restful-api/auth"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
@@ -11,6 +12,7 @@ import (
 
 type UserServiceImpl struct {
 	repository.UserRepository
+	auth.JwtAuth
 }
 
 func (s *UserServiceImpl) FindByID(userID int) web.UserResponse {
@@ -33,7 +35,9 @@ func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
-	findByEmail.Token = "token"
+	token, _ := s.JwtAuth.GenerateJwtToken(findByEmail.ID)
+	findByEmail.Token = token
+
 	update := s.UserRepository.Update(findByEmail)
 
 	return helper.ToUserResponse(update)
@@ -54,6 +58,9 @@ func (s *UserServiceImpl) Register(input web.UserRegisterInput) web.UserResponse
 	return helper.ToUserResponse(save)
 }
 
-func NewUserService(userRepository repository.UserRepository) UserService {
-	return &UserServiceImpl{UserRepository: userRepository}
+func NewUserService(userRepository repository.UserRepository, jwtAuth auth.JwtAuth) UserService {
+	return &UserServiceImpl{
+		UserRepository: userRepository,
+		JwtAuth:        jwtAuth,
+	}
 }

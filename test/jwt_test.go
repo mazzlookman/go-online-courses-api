@@ -7,7 +7,7 @@ import (
 )
 
 func TestGenerateToken(t *testing.T) {
-	jwtAuth := auth.NewJwtAuthImpl()
+	jwtAuth := auth.NewJwtAuth()
 	jwtToken, err := jwtAuth.GenerateJwtToken(10)
 	if err != nil {
 		log.Println(err)
