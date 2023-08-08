@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/web"
@@ -9,6 +10,35 @@ import (
 
 type UserControllerImpl struct {
 	service.UserService
+}
+
+func (c *UserControllerImpl) Logout(ctx *gin.Context) {
+	userID := ctx.MustGet("currentUser").(web.UserResponse).ID
+	userResponse := c.UserService.Logout(userID)
+	if userResponse.Token == "" {
+		ctx.JSON(200,
+			helper.APIResponse(200, "You're logged out",
+				gin.H{"user": userResponse.Name, "token": userResponse.Token}),
+		)
+	}
+}
+
+func (c *UserControllerImpl) UploadAvatar(ctx *gin.Context) {
+	fileHeader, err := ctx.FormFile("avatar")
+	helper.PanicIfError(err)
+	userID := ctx.MustGet("currentUser").(web.UserResponse).ID
+	filePath := fmt.Sprintf("assets/images/avatars/%d-%s", userID, fileHeader.Filename)
+
+	err = ctx.SaveUploadedFile(fileHeader, filePath)
+	helper.PanicIfError(err)
+
+	uploadAvatar := c.UserService.UploadAvatar(userID, filePath)
+
+	ctx.JSON(
+		200,
+		helper.APIResponse(200, "You're avatar is uploaded",
+			gin.H{"user": uploadAvatar.Name, "avatar": uploadAvatar.Avatar, "is_uploaded": true}),
+	)
 }
 
 func (c *UserControllerImpl) GetByID(ctx *gin.Context) {

@@ -23,8 +23,10 @@ func NewRouter() *gin.Engine {
 	v1 := router.Group("/api/v1")
 
 	v1.POST("/users", userController.Register)
-	v1.GET("/users", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
 	v1.POST("/users/login", userController.Login)
+	v1.POST("/users/logout", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.Logout)
+	v1.GET("/users", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
+	v1.POST("/users/avatars", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
 
 	return router
 }

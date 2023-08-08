@@ -3,10 +3,9 @@ package auth
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
-	"go-pzn-restful-api/helper"
 )
 
-var secretKey = []byte(helper.GetEnv("SECRET_KEY"))
+var secretKey = []byte("inirahasiabanget")
 
 type JwtAuth interface {
 	GenerateJwtToken(userID int) (string, error)

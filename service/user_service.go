@@ -6,5 +6,6 @@ type UserService interface {
 	Login(input web.UserLoginInput) web.UserResponse
 	Register(input web.UserRegisterInput) web.UserResponse
 	FindByID(userID int) web.UserResponse
-	//UploadAvatar()
+	UploadAvatar(userID int, filePath string) web.UserResponse
+	Logout(userID int) web.UserResponse
 }
