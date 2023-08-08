@@ -45,10 +45,12 @@ func (r *UserRepositoryImpl) FindByID(userID int) (domain.User, error) {
 	return user, nil
 }
 
-func (r *UserRepositoryImpl) Delete(userID int) {
+func (r *UserRepositoryImpl) Delete(userName string) error {
 	user := domain.User{}
-	err := r.db.Where("id=?", userID).Delete(&user).Error
+	err := r.db.Where("name=?", userName).Delete(&user).Error
 	helper.PanicIfError(err)
+
+	return nil
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
