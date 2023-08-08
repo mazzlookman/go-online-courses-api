@@ -9,24 +9,42 @@ import (
 	"go-pzn-restful-api/service"
 )
 
+var (
+	jwtAuth        = auth.NewJwtAuth()
+	db             = DBConnection()
+	userRepository = repository.NewUserRepository(db)
+	userService    = service.NewUserService(userRepository, jwtAuth)
+)
+
+func userControllerInit() controller.UserController {
+	return controller.NewUserController(userService)
+}
+
+func authorControllerInit() controller.AuthorController {
+	authorRepository := repository.NewAuthorRepository(db)
+	authorService := service.NewAuthorService(authorRepository)
+
+	return controller.NewAuthorController(authorService)
+}
+
 func NewRouter() *gin.Engine {
-	// User
-	db := DBConnection()
-	jwtAuth := auth.NewJwtAuth()
-	userRepository := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepository, jwtAuth)
-	userController := controller.NewUserController(userService)
+	userController := userControllerInit()
+	authorController := authorControllerInit()
 
 	router := gin.Default()
 	router.Use(gin.CustomRecovery(middleware.ErrorHandler))
 
 	v1 := router.Group("/api/v1")
 
+	// User endpoints
 	v1.POST("/users", userController.Register)
 	v1.POST("/users/login", userController.Login)
 	v1.POST("/users/logout", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.Logout)
 	v1.GET("/users", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
 	v1.POST("/users/avatars", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
+
+	// Author endpoints
+	v1.POST("/authors", authorController.Create)
 
 	return router
 }

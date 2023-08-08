@@ -14,3 +14,11 @@ func ToUserResponse(user domain.User) web.UserResponse {
 		Token:  user.Token,
 	}
 }
+
+func ToAuthorResponse(author domain.Author) web.AuthorResponse {
+	return web.AuthorResponse{
+		ID:           author.ID,
+		Name:         author.Name,
+		Introduction: author.Introduction,
+	}
+}

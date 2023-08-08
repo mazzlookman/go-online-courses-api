@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"go-pzn-restful-api/app"
 	"go-pzn-restful-api/test/util"
 	"io"
 	"mime/multipart"
@@ -17,14 +16,12 @@ import (
 	"testing"
 )
 
-var r = app.NewRouter()
-
 func TestUserRegister(t *testing.T) {
 	reqBody := strings.NewReader(`{"name": "test","email": "test@test.com","password": "123"}`)
 	req := httptest.NewRequest("POST", "/api/v1/users", reqBody)
 	w := httptest.NewRecorder()
 
-	r.ServeHTTP(w, req)
+	util.R.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -44,7 +41,7 @@ func TestUserLogin(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/v1/users/login", reqBody)
 	w := httptest.NewRecorder()
-	r.ServeHTTP(w, req)
+	util.R.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -67,7 +64,7 @@ func TestGetUser(t *testing.T) {
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest("GET", "/api/v1/users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
-	r.ServeHTTP(w, req)
+	util.R.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -108,7 +105,7 @@ func TestUploadAvatar(t *testing.T) {
 	req.Header.Add("Content-Type", multipartWriter.FormDataContentType())
 	req.Header.Add("Authorization", "Bearer "+token)
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, req)
+	util.R.ServeHTTP(rec, req)
 
 	response := rec.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -129,7 +126,7 @@ func TestLogout(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/v1/users/logout", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, req)
+	util.R.ServeHTTP(rec, req)
 
 	response := rec.Result()
 	bytes, _ := io.ReadAll(response.Body)

@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	Db             = app.DBConnection()
-	UserRepository = repository.NewUserRepository(Db)
-	JwtAuth        = auth.NewJwtAuth()
-	UserService    = service.NewUserService(UserRepository, JwtAuth)
+	R              = app.NewRouter()
+	db             = app.DBConnection()
+	userRepository = repository.NewUserRepository(db)
+	jwtAuth        = auth.NewJwtAuth()
+	userService    = service.NewUserService(userRepository, jwtAuth)
 )
 
 func CreateUserTest() web.UserResponse {
@@ -24,11 +25,11 @@ func CreateUserTest() web.UserResponse {
 		Password: "123",
 	}
 	log.Println("User registered")
-	return UserService.Register(input)
+	return userService.Register(input)
 }
 
 func DeleteUserTest() {
-	err := UserRepository.Delete("test")
+	err := userRepository.Delete("test")
 	if err != nil {
 		helper.PanicIfError(err)
 	}
@@ -37,7 +38,7 @@ func DeleteUserTest() {
 }
 
 func GetTokenAfterLogin() string {
-	login := UserService.Login(web.UserLoginInput{
+	login := userService.Login(web.UserLoginInput{
 		Email:    "test@test.com",
 		Password: "123",
 	})
