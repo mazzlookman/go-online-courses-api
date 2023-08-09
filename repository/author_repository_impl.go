@@ -38,6 +38,14 @@ func (r *AuthorRepositoryImpl) Save(author domain.Author) domain.Author {
 	return author
 }
 
+func (r *AuthorRepositoryImpl) Delete(email string) error {
+	user := domain.Author{}
+	err := r.db.Where("email=?", email).Delete(&user).Error
+	helper.PanicIfError(err)
+
+	return nil
+}
+
 func NewAuthorRepository(db *gorm.DB) AuthorRepository {
 	return &AuthorRepositoryImpl{db: db}
 }

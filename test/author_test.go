@@ -1,36 +1,41 @@
 package test
 
 import (
-	"bytes"
 	"encoding/json"
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/test/util"
 	"io"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
-func TestCreateAuthor(t *testing.T) {
-	authorInputRequest := web.AuthorRegisterInput{
-		Name:    "test",
-		Profile: "Test Intro",
-	}
-	m, _ := json.Marshal(authorInputRequest)
-	body := bytes.NewReader(m)
+func TestAuthorLogin(t *testing.T) {
+	authorTest := util.CreateAuthorTest()
+	reqBody := strings.NewReader(`{"email": "test@test.com","password": "123"}`)
 
-	req := httptest.NewRequest("POST", "/api/v1/authors", body)
-	req.Header.Add("role", "admin")
 	w := httptest.NewRecorder()
-
-	util.R.ServeHTTP(w, req)
+	context, eng := gin.CreateTestContext(w)
+	req := httptest.NewRequest("POST", "/api/v1/authors/login", reqBody)
+	eng.ServeHTTP(w, req)
 
 	response := w.Result()
-	readAll, _ := io.ReadAll(response.Body)
+	bytes, _ := io.ReadAll(response.Body)
 
-	mapResponse := map[string]any{}
-	json.Unmarshal(readAll, &mapResponse)
+	var mapResponse map[string]interface{}
+	json.Unmarshal(bytes, &mapResponse)
 
+	fmt.Println(mapResponse)
 	assert.Equal(t, 200, response.StatusCode)
-	assert.Equal(t, "test", mapResponse["data"].(map[string]any)["name"])
+	assert.Equal(t, authorTest.ID, context.MustGet("author_id"))
+	assert.Equal(t, "test", mapResponse["data"].(map[string]interface{})["name"])
+	assert.NotNil(t, mapResponse["data"].(map[string]any)["token"])
+
+	util.DeleteAuthorTest()
+}
+
+func TestDeleteAuthor(t *testing.T) {
+	util.DeleteAuthorTest()
 }
