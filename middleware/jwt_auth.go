@@ -34,6 +34,6 @@ func JwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService) gi
 		userID := int(claims["user_id"].(float64))
 
 		findByID := userService.FindByID(userID)
-		ctx.Set("currentUser", findByID)
+		ctx.Set("current_user", findByID)
 	}
 }

@@ -13,7 +13,7 @@ type UserControllerImpl struct {
 }
 
 func (c *UserControllerImpl) Logout(ctx *gin.Context) {
-	userID := ctx.MustGet("currentUser").(web.UserResponse).ID
+	userID := ctx.MustGet("current_user").(web.UserResponse).ID
 	userResponse := c.UserService.Logout(userID)
 	if userResponse.Token == "" {
 		ctx.JSON(200,
@@ -26,7 +26,7 @@ func (c *UserControllerImpl) Logout(ctx *gin.Context) {
 func (c *UserControllerImpl) UploadAvatar(ctx *gin.Context) {
 	fileHeader, err := ctx.FormFile("avatar")
 	helper.PanicIfError(err)
-	userID := ctx.MustGet("currentUser").(web.UserResponse).ID
+	userID := ctx.MustGet("current_user").(web.UserResponse).ID
 	filePath := fmt.Sprintf("assets/images/avatars/%d-%s", userID, fileHeader.Filename)
 
 	err = ctx.SaveUploadedFile(fileHeader, filePath)
@@ -43,7 +43,7 @@ func (c *UserControllerImpl) UploadAvatar(ctx *gin.Context) {
 
 func (c *UserControllerImpl) GetByID(ctx *gin.Context) {
 	// user_id from token
-	user := ctx.MustGet("currentUser").(web.UserResponse)
+	user := ctx.MustGet("current_user").(web.UserResponse)
 	findByID := c.UserService.FindByID(user.ID)
 	ctx.JSON(
 		200,

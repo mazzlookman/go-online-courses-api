@@ -87,7 +87,7 @@ func TestUploadAvatar(t *testing.T) {
 	body := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(body)
 
-	// Create multipart header
+	// Register multipart header
 	fileHeader := make(textproto.MIMEHeader)
 	fileHeader.Set("Content-Disposition", fmt.Sprintf(`form-data; name="%s"; filename="%s"`, "avatar", "fc_page-0001.jpg"))
 	writer, err := multipartWriter.CreatePart(fileHeader)

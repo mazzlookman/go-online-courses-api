@@ -17,8 +17,10 @@ func ToUserResponse(user domain.User) web.UserResponse {
 
 func ToAuthorResponse(author domain.Author) web.AuthorResponse {
 	return web.AuthorResponse{
-		ID:           author.ID,
-		Name:         author.Name,
-		Introduction: author.Introduction,
+		ID:      author.ID,
+		Name:    author.Name,
+		Email:   author.Email,
+		Profile: author.Profile,
+		Avatar:  author.Avatar,
 	}
 }

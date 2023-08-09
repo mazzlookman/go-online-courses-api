@@ -7,6 +7,7 @@ import (
 	"go-pzn-restful-api/model/domain"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"log"
 )
 
 func DBConnection() *gorm.DB {
@@ -36,6 +37,7 @@ func DBMigrate(db *gorm.DB) error {
 		return err
 	}
 
+	log.Println("Migration is successfully")
 	return nil
 }
 

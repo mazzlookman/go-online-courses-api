@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"gorm.io/gorm"
@@ -8,6 +9,26 @@ import (
 
 type AuthorRepositoryImpl struct {
 	db *gorm.DB
+}
+
+func (r *AuthorRepositoryImpl) FindByEmail(email string) (domain.Author, error) {
+	author := domain.Author{}
+	err := r.db.Where("email=?", email).Find(&author).Error
+	if err != nil {
+		return author, errors.New("Author is not found")
+	}
+
+	return author, nil
+}
+
+func (r *AuthorRepositoryImpl) FindByID(authorID int) (domain.Author, error) {
+	author := domain.Author{}
+	err := r.db.Where("id=?", authorID).Find(&author).Error
+	if err != nil {
+		return author, errors.New("Author is not found")
+	}
+
+	return author, nil
 }
 
 func (r *AuthorRepositoryImpl) Save(author domain.Author) domain.Author {

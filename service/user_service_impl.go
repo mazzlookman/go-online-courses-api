@@ -24,7 +24,7 @@ func (s *UserServiceImpl) Logout(userID int) web.UserResponse {
 
 	findByID.Token = ""
 	update := s.UserRepository.Update(findByID)
-	
+
 	return helper.ToUserResponse(update)
 }
 
@@ -81,6 +81,11 @@ func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 }
 
 func (s *UserServiceImpl) Register(input web.UserRegisterInput) web.UserResponse {
+	findByEmail, err := s.UserRepository.FindByEmail(input.Email)
+	if findByEmail.ID != 0 {
+		panic(helper.NewNotFoundError(errors.New("Email has been registered").Error()))
+	}
+
 	password, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	helper.PanicIfError(err)
 

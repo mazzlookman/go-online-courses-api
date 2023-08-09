@@ -12,9 +12,9 @@ import (
 )
 
 func TestCreateAuthor(t *testing.T) {
-	authorInputRequest := web.AuthorInputRequest{
-		Name:         "test",
-		Introduction: "Test Intro",
+	authorInputRequest := web.AuthorRegisterInput{
+		Name:    "test",
+		Profile: "Test Intro",
 	}
 	m, _ := json.Marshal(authorInputRequest)
 	body := bytes.NewReader(m)

@@ -44,7 +44,8 @@ func NewRouter() *gin.Engine {
 	v1.POST("/users/avatars", middleware.JwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
 
 	// Author endpoints
-	v1.POST("/authors", authorController.Create)
+	v1.POST("/authors", authorController.Register)
+	v1.POST("/authors/login", authorController.Login)
 
 	return router
 }
