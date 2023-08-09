@@ -8,7 +8,7 @@ import (
 var secretKey = []byte("inirahasiabanget")
 
 type JwtAuth interface {
-	GenerateJwtToken(userID int) (string, error)
+	GenerateJwtToken(role string, id int) (string, error)
 	ValidateJwtToken(token string) (*jwt.Token, error)
 }
 
@@ -19,9 +19,16 @@ func NewJwtAuth() JwtAuth {
 	return &JwtAuthImpl{}
 }
 
-func (j *JwtAuthImpl) GenerateJwtToken(userID int) (string, error) {
+func (j *JwtAuthImpl) GenerateJwtToken(role string, id int) (string, error) {
 	mapClaims := jwt.MapClaims{}
-	mapClaims["user_id"] = userID
+
+	if role == "author" {
+		mapClaims["author_id"] = id
+	}
+
+	if role == "user" {
+		mapClaims["user_id"] = id
+	}
 
 	tokenWithHeader := jwt.NewWithClaims(jwt.SigningMethodHS256, mapClaims)
 

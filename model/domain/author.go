@@ -9,6 +9,7 @@ type Author struct {
 	Password  string
 	Profile   string `gorm:"type:text"`
 	Avatar    string
+	Token     string
 	CreatedAt time.Time `gorm:"default:current_timestamp"`
 	UpdatedAt time.Time `gorm:"default:current_timestamp"`
 	Courses   []Course

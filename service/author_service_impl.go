@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"go-pzn-restful-api/auth"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
@@ -11,6 +12,19 @@ import (
 
 type AuthorServiceImpl struct {
 	repository.AuthorRepository
+	auth.JwtAuth
+}
+
+func (s *AuthorServiceImpl) Logout(authorID int) web.AuthorResponse {
+	findByID, err := s.AuthorRepository.FindByID(authorID)
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
+
+	findByID.Token = ""
+	update := s.AuthorRepository.Update(findByID)
+
+	return helper.ToAuthorResponse(update)
 }
 
 func (s *AuthorServiceImpl) Register(input web.AuthorRegisterInput) web.AuthorResponse {
@@ -33,17 +47,22 @@ func (s *AuthorServiceImpl) Register(input web.AuthorRegisterInput) web.AuthorRe
 }
 
 func (s *AuthorServiceImpl) Login(input web.AuthorLoginInput) web.AuthorResponse {
-	findByID, err := s.AuthorRepository.FindByEmail(input.Email)
-	if err != nil || findByID.ID == 0 {
+	findByEmail, err := s.AuthorRepository.FindByEmail(input.Email)
+	if err != nil || findByEmail.ID == 0 {
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(findByID.Password), []byte(input.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(findByEmail.Password), []byte(input.Password))
 	if err != nil {
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
-	return helper.ToAuthorResponse(findByID)
+	token, _ := s.JwtAuth.GenerateJwtToken("author", findByEmail.ID)
+	findByEmail.Token = token
+
+	update := s.AuthorRepository.Update(findByEmail)
+
+	return helper.ToAuthorResponse(update)
 }
 
 func (s *AuthorServiceImpl) FindByID(authorID int) web.AuthorResponse {
@@ -55,6 +74,9 @@ func (s *AuthorServiceImpl) FindByID(authorID int) web.AuthorResponse {
 	return helper.ToAuthorResponse(findByID)
 }
 
-func NewAuthorService(authorRepository repository.AuthorRepository) AuthorService {
-	return &AuthorServiceImpl{AuthorRepository: authorRepository}
+func NewAuthorService(authorRepository repository.AuthorRepository, jwtAuth auth.JwtAuth) AuthorService {
+	return &AuthorServiceImpl{
+		AuthorRepository: authorRepository,
+		JwtAuth:          jwtAuth,
+	}
 }

@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func JwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService) gin.HandlerFunc {
+func UserJwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		getHeader := ctx.GetHeader("Authorization")
 		if !strings.Contains(getHeader, "Bearer") {
@@ -35,5 +35,33 @@ func JwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService) gi
 
 		findByID := userService.FindByID(userID)
 		ctx.Set("current_user", findByID)
+	}
+}
+
+func AuthorJwtAuthMiddleware(jwtAuth auth.JwtAuth, authorService service.AuthorService) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		getHeader := ctx.GetHeader("Authorization")
+		if !strings.Contains(getHeader, "Bearer") {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
+			return
+		}
+		valueHeader := strings.Split(getHeader, " ")
+		token := valueHeader[1]
+
+		validateJwtToken, err := jwtAuth.ValidateJwtToken(token)
+		if !validateJwtToken.Valid || err != nil {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
+			return
+		}
+
+		claims := validateJwtToken.Claims.(jwt.MapClaims)
+		authorID := int(claims["author_id"].(float64))
+
+		findByID := authorService.FindByID(authorID)
+		ctx.Set("current_author", findByID)
 	}
 }

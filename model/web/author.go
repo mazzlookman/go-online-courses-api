@@ -19,4 +19,5 @@ type AuthorResponse struct {
 	Email   string `json:"email"`
 	Profile string `json:"profile"`
 	Avatar  string `json:"avatar"`
+	Token   string `json:"token"`
 }

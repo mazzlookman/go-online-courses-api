@@ -22,5 +22,6 @@ func ToAuthorResponse(author domain.Author) web.AuthorResponse {
 		Email:   author.Email,
 		Profile: author.Profile,
 		Avatar:  author.Avatar,
+		Token:   author.Token,
 	}
 }

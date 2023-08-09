@@ -12,15 +12,22 @@ type AuthorControllerImpl struct {
 	service.AuthorService
 }
 
+func (c *AuthorControllerImpl) Logout(ctx *gin.Context) {
+	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
+	logout := c.AuthorService.Logout(authorID)
+
+	if logout.Token == "" {
+		ctx.JSON(200,
+			helper.APIResponse(200, "You're logged out",
+				gin.H{"author": logout.Name, "token": logout.Token}),
+		)
+	}
+}
+
 func (c *AuthorControllerImpl) Register(ctx *gin.Context) {
 	author := web.AuthorRegisterInput{}
 	err := ctx.ShouldBind(&author)
-	//if ctx.GetHeader("role") != "admin" {
-	//	ctx.AbortWithStatusJSON(401,
-	//		helper.APIResponse(401, "Unauthorized", "You're not an admin"),
-	//	)
-	//	return
-	//}
+
 	fileHeader, err := ctx.FormFile("avatar")
 	helper.PanicIfError(err)
 	filePath := fmt.Sprintf("assets/images/avatars/%s-%s", author.Email, fileHeader.Filename)
@@ -42,7 +49,6 @@ func (c *AuthorControllerImpl) Login(ctx *gin.Context) {
 	helper.PanicIfError(err)
 
 	authorResponse := c.AuthorService.Login(input)
-	ctx.Set("author_id", authorResponse.ID)
 	ctx.JSON(200,
 		helper.APIResponse(200, "Author has been logged in", authorResponse),
 	)

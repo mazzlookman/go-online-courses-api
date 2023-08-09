@@ -11,6 +11,13 @@ type AuthorRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func (r *AuthorRepositoryImpl) Update(author domain.Author) domain.Author {
+	err := r.db.Save(&author).Error
+	helper.PanicIfError(err)
+
+	return author
+}
+
 func (r *AuthorRepositoryImpl) FindByEmail(email string) (domain.Author, error) {
 	author := domain.Author{}
 	err := r.db.Where("email=?", email).Find(&author).Error

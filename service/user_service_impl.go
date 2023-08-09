@@ -72,7 +72,7 @@ func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
-	token, _ := s.JwtAuth.GenerateJwtToken(findByEmail.ID)
+	token, _ := s.JwtAuth.GenerateJwtToken("user", findByEmail.ID)
 	findByEmail.Token = token
 
 	update := s.UserRepository.Update(findByEmail)
