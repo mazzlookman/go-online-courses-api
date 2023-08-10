@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/web"
@@ -12,16 +13,31 @@ type CourseControllerImpl struct {
 	service.CourseService
 }
 
+func (c *CourseControllerImpl) UploadBanner(ctx *gin.Context) {
+	courseID, _ := strconv.Atoi(ctx.Param("courseID"))
+	fileHeader, _ := ctx.FormFile("banner")
+
+	pathFile := fmt.Sprintf("assets/images/avatars/%d-%s", courseID, fileHeader.Filename)
+	uploadBanner := c.CourseService.UploadBanner(courseID, pathFile)
+
+	ctx.SaveUploadedFile(fileHeader, pathFile)
+
+	ctx.JSON(200,
+		helper.APIResponse(200, "Banner is successfully uploaded",
+			gin.H{"is_uploaded": uploadBanner}),
+	)
+}
+
 func (c *CourseControllerImpl) UserEnrolled(ctx *gin.Context) {
-	userID := ctx.MustGet("current_user").(web.UserResponse).ID
+	user := ctx.MustGet("current_user").(web.UserResponse)
 	courseID, err := strconv.Atoi(ctx.Param("courseID"))
 	helper.PanicIfError(err)
 
-	userEnrolled := c.CourseService.UserEnrolled(userID, courseID)
+	c.CourseService.UserEnrolled(user.ID, courseID)
 
 	ctx.JSON(200,
 		helper.APIResponse(200, "Success to enrolled",
-			gin.H{"users_enrolled": userEnrolled}),
+			gin.H{"enrolled by": user.Name}),
 	)
 }
 

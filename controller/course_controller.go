@@ -8,4 +8,5 @@ type CourseController interface {
 	GetByAuthorID(ctx *gin.Context)
 	GetAll(ctx *gin.Context)
 	UserEnrolled(ctx *gin.Context)
+	UploadBanner(ctx *gin.Context)
 }

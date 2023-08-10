@@ -39,10 +39,6 @@ func (s *UserServiceImpl) UploadAvatar(userID int, filePath string) web.UserResp
 	if oldAvatar != filePath {
 		if findByID.Avatar == "" {
 			return updateWhenUploadAvatar(findByID, userResponse, filePath, s.UserRepository)
-			//findByID.Avatar = filePath
-			//update := s.UserRepository.Update(findByID)
-			//userResponse = helper.ToUserResponse(update)
-			//return userResponse
 		}
 		err := os.Remove(oldAvatar)
 		helper.PanicIfError(err)

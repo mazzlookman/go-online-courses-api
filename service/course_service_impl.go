@@ -6,10 +6,29 @@ import (
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/repository"
+	"os"
+	"time"
 )
 
 type CourseServiceImpl struct {
 	repository.CourseRepository
+}
+
+func (s *CourseServiceImpl) UploadBanner(courseID int, pathFile string) bool {
+	findByID, err := s.CourseRepository.FindByID(courseID)
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+	}
+
+	if findByID.Banner != pathFile {
+		if findByID.Banner == "" {
+			return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
+		}
+		os.Remove(findByID.Banner)
+		return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
+	}
+
+	return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
 }
 
 func (s *CourseServiceImpl) UserEnrolled(userID int, courseID int) domain.UserCourse {
@@ -91,6 +110,13 @@ func (s *CourseServiceImpl) Create(request web.CourseInputRequest) web.CourseRes
 
 	save := s.CourseRepository.Save(course)
 	return helper.ToCourseResponse(save, 0)
+}
+
+func updateWhenUploadBanner(course domain.Course, pathFile string, courseRepository repository.CourseRepository) bool {
+	course.Banner = pathFile
+	course.UpdatedAt = time.Now()
+	courseRepository.Update(course)
+	return true
 }
 
 func NewCourseService(courseRepository repository.CourseRepository) CourseService {

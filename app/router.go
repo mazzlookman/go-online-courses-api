@@ -50,6 +50,7 @@ func NewRouter() *gin.Engine {
 
 	// Course endpoints
 	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
+	v1.PUT("/courses/:courseID/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
 	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorID)
 	v1.GET("/courses/:slug", courseController.GetBySlug)
 	v1.GET("/courses", courseController.GetAll)

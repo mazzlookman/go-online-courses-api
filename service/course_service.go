@@ -7,6 +7,7 @@ import (
 
 type CourseService interface {
 	Create(request web.CourseInputRequest) web.CourseResponse
+	UploadBanner(courseID int, pathFile string) bool
 	FindByID(courseID int) web.CourseResponse
 	FindBySlug(slug string) web.CourseBySlugResponse
 	FindByAuthorID(authorID int) []web.CourseResponse

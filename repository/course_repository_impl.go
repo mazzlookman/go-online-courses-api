@@ -10,6 +10,13 @@ type CourseRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func (r *CourseRepositoryImpl) Update(course domain.Course) domain.Course {
+	err := r.db.Save(&course).Error
+	helper.PanicIfError(err)
+
+	return course
+}
+
 func (r *CourseRepositoryImpl) CountUsersEnrolled(courseID int) int {
 	var count int64
 	userCourse := domain.UserCourse{}
