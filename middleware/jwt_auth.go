@@ -44,7 +44,7 @@ func AuthorJwtAuthMiddleware(jwtAuth auth.JwtAuth, authorService service.AuthorS
 		if !strings.Contains(getHeader, "Bearer") {
 			ctx.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
+				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
 			return
 		}
 		valueHeader := strings.Split(getHeader, " ")
@@ -54,11 +54,18 @@ func AuthorJwtAuthMiddleware(jwtAuth auth.JwtAuth, authorService service.AuthorS
 		if !validateJwtToken.Valid || err != nil {
 			ctx.AbortWithStatusJSON(
 				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
+				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
 			return
 		}
 
 		claims := validateJwtToken.Claims.(jwt.MapClaims)
+		if claims["author_id"] == nil {
+			ctx.AbortWithStatusJSON(
+				http.StatusUnauthorized,
+				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
+			return
+		}
+
 		authorID := int(claims["author_id"].(float64))
 
 		findByID := authorService.FindByID(authorID)

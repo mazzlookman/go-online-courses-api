@@ -6,10 +6,20 @@ import (
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/service"
+	"strconv"
 )
 
 type AuthorControllerImpl struct {
 	service.AuthorService
+}
+
+func (c *AuthorControllerImpl) GetByID(ctx *gin.Context) {
+	param := ctx.Param("authorID")
+	authorID, _ := strconv.Atoi(param)
+	authorResponse := c.AuthorService.FindByID(authorID)
+	ctx.JSON(200,
+		helper.APIResponse(200, "Detail of author", authorResponse),
+	)
 }
 
 func (c *AuthorControllerImpl) Logout(ctx *gin.Context) {

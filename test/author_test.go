@@ -39,3 +39,9 @@ func TestAuthorLogin(t *testing.T) {
 func TestDeleteAuthor(t *testing.T) {
 	util.DeleteAuthorTest()
 }
+
+func TestGetByID(t *testing.T) {
+	author := util.GetAuthorByID(11)
+	marshal, _ := json.Marshal(author)
+	t.Log(string(marshal))
+}

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/repository"
 	"go-pzn-restful-api/service"
@@ -8,8 +9,8 @@ import (
 )
 
 var (
-	authorRepo = repository.NewAuthorRepository(db)
-	authorServ = service.NewAuthorService(authorRepo)
+	authorRepo = repository.NewAuthorRepository(Db)
+	authorServ = service.NewAuthorService(authorRepo, JwtAuth)
 )
 
 func CreateAuthorTest() web.AuthorResponse {
@@ -31,4 +32,13 @@ func DeleteAuthorTest() {
 		log.Fatalln(err.Error())
 	}
 	log.Println("Author has been deleted")
+}
+
+func GetAuthorByID(id int) domain.Author {
+	author, err := authorRepo.FindByID(id)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return author
 }

@@ -12,10 +12,10 @@ import (
 
 var (
 	R              = app.NewRouter()
-	db             = app.DBConnection()
-	userRepository = repository.NewUserRepository(db)
-	jwtAuth        = auth.NewJwtAuth()
-	userService    = service.NewUserService(userRepository, jwtAuth)
+	Db             = app.DBConnection()
+	userRepository = repository.NewUserRepository(Db)
+	JwtAuth        = auth.NewJwtAuth()
+	userService    = service.NewUserService(userRepository, JwtAuth)
 )
 
 func CreateUserTest() web.UserResponse {

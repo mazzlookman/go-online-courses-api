@@ -22,6 +22,11 @@ var (
 	authorRepository = repository.NewAuthorRepository(db)
 	authorService    = service.NewAuthorService(authorRepository, jwtAuth)
 	authorController = controller.NewAuthorController(authorService)
+
+	//course
+	courseRepository = repository.NewCourseRepository(db)
+	courseService    = service.NewCourseService(courseRepository)
+	courseController = controller.NewCourseController(courseService)
 )
 
 func NewRouter() *gin.Engine {
@@ -42,6 +47,11 @@ func NewRouter() *gin.Engine {
 	v1.POST("/authors", authorController.Register)
 	v1.POST("/authors/login", authorController.Login)
 	v1.POST("/authors/logout", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.Logout)
+	v1.GET("/authors/:authorID", authorController.GetByID)
+
+	// Course endpoints
+	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
+	v1.GET("/courses/:slug", courseController.GetBySlug)
 
 	return router
 }

@@ -14,4 +14,5 @@ type Course struct {
 	CreatedAt   time.Time `gorm:"default:current_timestamp"`
 	UpdatedAt   time.Time `gorm:"default:current_timestamp"`
 	Users       []User    `gorm:"many2many:user_courses;"`
+	Author      Author
 }
