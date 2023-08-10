@@ -10,6 +10,17 @@ type CourseRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func (r *CourseRepositoryImpl) FindByUserID(userID int) ([]domain.Course, error) {
+	courses := []domain.Course{}
+	err := r.db.
+		Joins("JOIN user_courses ON user_courses.course_id=courses.id").
+		Joins("JOIN users ON users.id=user_courses.user_id").
+		Where("users.id=?", userID).
+		Find(&courses).Error
+	helper.PanicIfError(err)
+	return courses, nil
+}
+
 func (r *CourseRepositoryImpl) Update(course domain.Course) domain.Course {
 	err := r.db.Save(&course).Error
 	helper.PanicIfError(err)

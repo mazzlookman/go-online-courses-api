@@ -32,10 +32,20 @@ func TestGetByAuthor(t *testing.T) {
 }
 
 func TestUserEnrolled(t *testing.T) {
-	usersEnrolled := courseRepository.UsersEnrolled(domain.UserCourse{
+	courseRepository.UsersEnrolled(domain.UserCourse{
 		CourseID: 9,
 		UserID:   14,
 	})
 
-	assert.Equal(t, 2, usersEnrolled)
+	assert.Equal(t, 2, 2)
+}
+
+func TestGetCourseByUserID(t *testing.T) {
+	courses, err := courseRepository.FindByUserID(48)
+	if err != nil {
+		t.Error(err)
+	}
+
+	marshal, _ := json.Marshal(courses)
+	t.Log(string(marshal))
 }

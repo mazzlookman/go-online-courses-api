@@ -14,6 +14,22 @@ type CourseServiceImpl struct {
 	repository.CourseRepository
 }
 
+func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
+	courses, err := s.CourseRepository.FindByUserID(userID)
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+	}
+
+	coursesResponse := []web.CourseResponse{}
+	for _, course := range courses {
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
+		coursesResponse = append(coursesResponse, courseResponse)
+	}
+
+	return coursesResponse
+}
+
 func (s *CourseServiceImpl) UploadBanner(courseID int, pathFile string) bool {
 	findByID, err := s.CourseRepository.FindByID(courseID)
 	if err != nil {

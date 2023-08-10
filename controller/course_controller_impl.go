@@ -13,6 +13,15 @@ type CourseControllerImpl struct {
 	service.CourseService
 }
 
+func (c *CourseControllerImpl) GetByUserID(ctx *gin.Context) {
+	userID := ctx.MustGet("current_user").(web.UserResponse).ID
+	courseResponses := c.CourseService.FindByUserID(userID)
+
+	ctx.JSON(200,
+		helper.APIResponse(200, "List of course", courseResponses),
+	)
+}
+
 func (c *CourseControllerImpl) UploadBanner(ctx *gin.Context) {
 	courseID, _ := strconv.Atoi(ctx.Param("courseID"))
 	fileHeader, _ := ctx.FormFile("banner")
