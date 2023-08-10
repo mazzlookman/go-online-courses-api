@@ -12,7 +12,6 @@ func ToUserResponse(user domain.User) web.UserResponse {
 	userResponse.Email = user.Email
 	userResponse.Avatar = user.Avatar
 	userResponse.Token = user.Token
-	userResponse.Courses = ToCoursesResponse(user.Courses)
 
 	return userResponse
 }
@@ -29,7 +28,7 @@ func ToAuthorResponse(author domain.Author) web.AuthorResponse {
 	return authorResponse
 }
 
-func ToCourseResponse(course domain.Course) web.CourseResponse {
+func ToCourseResponse(course domain.Course, countUserEnrolled int) web.CourseResponse {
 	courseResponse := web.CourseResponse{}
 	courseResponse.ID = course.ID
 	courseResponse.AuthorID = course.AuthorID
@@ -39,18 +38,23 @@ func ToCourseResponse(course domain.Course) web.CourseResponse {
 	courseResponse.Perks = course.Perks
 	courseResponse.Price = course.Price
 	courseResponse.Banner = course.Banner
-	courseResponse.UsersEnrolled = 0
-	courseResponse.Author = ToAuthorResponse(course.Author)
+	courseResponse.UsersEnrolled = countUserEnrolled
 
 	return courseResponse
 }
 
-func ToCoursesResponse(courses []domain.Course) []web.CourseResponse {
-	coursesResponse := []web.CourseResponse{}
-	for _, course := range courses {
-		courseResponse := ToCourseResponse(course)
-		coursesResponse = append(coursesResponse, courseResponse)
-	}
+func ToCourseBySlugResponse(course domain.Course, countUserEnrolled int) web.CourseBySlugResponse {
+	courseResponse := web.CourseBySlugResponse{}
+	courseResponse.ID = course.ID
+	courseResponse.AuthorID = course.AuthorID
+	courseResponse.Title = course.Title
+	courseResponse.Slug = course.Slug
+	courseResponse.Description = course.Description
+	courseResponse.Perks = course.Perks
+	courseResponse.Price = course.Price
+	courseResponse.Banner = course.Banner
+	courseResponse.UsersEnrolled = countUserEnrolled
+	courseResponse.Author = ToAuthorResponse(course.Author)
 
-	return coursesResponse
+	return courseResponse
 }

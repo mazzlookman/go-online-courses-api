@@ -139,3 +139,7 @@ func TestLogout(t *testing.T) {
 	assert.Equal(t, "", mapResponse["data"].(map[string]any)["token"])
 	util.DeleteUserTest()
 }
+
+func TestCreateNewUser(t *testing.T) {
+	util.CreateUserTest()
+}

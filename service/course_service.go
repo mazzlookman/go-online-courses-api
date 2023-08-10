@@ -1,9 +1,15 @@
 package service
 
-import "go-pzn-restful-api/model/web"
+import (
+	"go-pzn-restful-api/model/domain"
+	"go-pzn-restful-api/model/web"
+)
 
 type CourseService interface {
 	Create(request web.CourseInputRequest) web.CourseResponse
 	FindByID(courseID int) web.CourseResponse
-	FindBySlug(slug string) web.CourseResponse
+	FindBySlug(slug string) web.CourseBySlugResponse
+	FindByAuthorID(authorID int) []web.CourseResponse
+	FindAll() []web.CourseResponse
+	UserEnrolled(userID int, courseID int) domain.UserCourse
 }

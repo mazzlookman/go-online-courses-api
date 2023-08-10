@@ -41,17 +41,19 @@ func NewRouter() *gin.Engine {
 	v1.POST("/users/login", userController.Login)
 	v1.POST("/users/logout", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.Logout)
 	v1.GET("/users", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
-	v1.POST("/users/avatars", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
+	v1.PUT("/users/avatars", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
 
 	// Author endpoints
 	v1.POST("/authors", authorController.Register)
 	v1.POST("/authors/login", authorController.Login)
 	v1.POST("/authors/logout", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.Logout)
-	v1.GET("/authors/:authorID", authorController.GetByID)
 
 	// Course endpoints
 	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
+	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorID)
 	v1.GET("/courses/:slug", courseController.GetBySlug)
+	v1.GET("/courses", courseController.GetAll)
+	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	return router
 }

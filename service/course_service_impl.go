@@ -12,13 +12,58 @@ type CourseServiceImpl struct {
 	repository.CourseRepository
 }
 
-func (s *CourseServiceImpl) FindBySlug(slug string) web.CourseResponse {
+func (s *CourseServiceImpl) UserEnrolled(userID int, courseID int) domain.UserCourse {
+	userCourse := domain.UserCourse{
+		CourseID: courseID,
+		UserID:   userID,
+	}
+
+	usersEnrolled, err := s.CourseRepository.UsersEnrolled(userCourse)
+	helper.PanicIfError(err)
+
+	return usersEnrolled
+}
+
+func (s *CourseServiceImpl) FindAll() []web.CourseResponse {
+	courses, err := s.CourseRepository.FindAll()
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+	}
+
+	coursesResponse := []web.CourseResponse{}
+	for _, course := range courses {
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
+		coursesResponse = append(coursesResponse, courseResponse)
+	}
+
+	return coursesResponse
+}
+
+func (s *CourseServiceImpl) FindByAuthorID(authorID int) []web.CourseResponse {
+	courses, err := s.CourseRepository.FindByAuthorID(authorID)
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+	}
+
+	coursesResponse := []web.CourseResponse{}
+	for _, course := range courses {
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
+		coursesResponse = append(coursesResponse, courseResponse)
+	}
+
+	return coursesResponse
+}
+
+func (s *CourseServiceImpl) FindBySlug(slug string) web.CourseBySlugResponse {
 	findBySlug, err := s.CourseRepository.FindBySlug(slug)
 	if err != nil {
 		panic(helper.NewNotFoundError(errors.New("Course is not found").Error()))
 	}
 
-	return helper.ToCourseResponse(findBySlug)
+	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findBySlug.ID)
+	return helper.ToCourseBySlugResponse(findBySlug, countUsersEnrolled)
 }
 
 func (s *CourseServiceImpl) FindByID(courseID int) web.CourseResponse {
@@ -26,8 +71,8 @@ func (s *CourseServiceImpl) FindByID(courseID int) web.CourseResponse {
 	if err != nil {
 		panic(helper.NewNotFoundError(errors.New("Course is not found").Error()))
 	}
-
-	return helper.ToCourseResponse(findByID)
+	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findByID.ID)
+	return helper.ToCourseResponse(findByID, countUsersEnrolled)
 }
 
 func (s *CourseServiceImpl) Create(request web.CourseInputRequest) web.CourseResponse {
@@ -45,8 +90,7 @@ func (s *CourseServiceImpl) Create(request web.CourseInputRequest) web.CourseRes
 	}
 
 	save := s.CourseRepository.Save(course)
-
-	return helper.ToCourseResponse(save)
+	return helper.ToCourseResponse(save, 0)
 }
 
 func NewCourseService(courseRepository repository.CourseRepository) CourseService {

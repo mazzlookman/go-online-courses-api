@@ -12,10 +12,9 @@ type UserLoginInput struct {
 }
 
 type UserResponse struct {
-	ID      int              `json:"id"`
-	Name    string           `json:"name"`
-	Email   string           `json:"email"`
-	Avatar  string           `json:"avatar"`
-	Token   string           `json:"token"`
-	Courses []CourseResponse `json:"courses"`
+	ID     int    `json:"id"`
+	Name   string `json:"name"`
+	Email  string `json:"email"`
+	Avatar string `json:"avatar"`
+	Token  string `json:"token"`
 }

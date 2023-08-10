@@ -37,7 +37,7 @@ func (r *UserRepositoryImpl) Update(user domain.User) domain.User {
 
 func (r *UserRepositoryImpl) FindByID(userID int) (domain.User, error) {
 	user := domain.User{}
-	err := r.db.Where("id=?", userID).Find(&user).Error
+	err := r.db.Preload("Courses").Where("id=?", userID).Find(&user).Error
 	if err != nil || user.ID == 0 {
 		return user, errors.New("User is not found")
 	}
