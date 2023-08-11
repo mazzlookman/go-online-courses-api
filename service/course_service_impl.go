@@ -7,11 +7,28 @@ import (
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/repository"
 	"os"
+	"strings"
 	"time"
 )
 
 type CourseServiceImpl struct {
 	repository.CourseRepository
+}
+
+func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResponse {
+	courses, err := s.CourseRepository.FindByCategory(categoryName)
+	if err != nil {
+		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+	}
+
+	coursesResponse := []web.CourseResponse{}
+	for _, course := range courses {
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
+		coursesResponse = append(coursesResponse, courseResponse)
+	}
+
+	return coursesResponse
 }
 
 func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
@@ -125,6 +142,11 @@ func (s *CourseServiceImpl) Create(request web.CourseInputRequest) web.CourseRes
 	}
 
 	save := s.CourseRepository.Save(course)
+	categoryCourse := s.CourseRepository.SaveToCategoryCourse(strings.ToLower(request.Category), save.ID)
+	if !categoryCourse {
+		panic(errors.New("Failed to create category for this course"))
+	}
+
 	return helper.ToCourseResponse(save, 0)
 }
 

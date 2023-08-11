@@ -7,6 +7,7 @@ type CourseController interface {
 	GetBySlug(ctx *gin.Context)
 	GetByAuthorID(ctx *gin.Context)
 	GetByUserID(ctx *gin.Context)
+	GetByCategory(ctx *gin.Context)
 	GetAll(ctx *gin.Context)
 	UserEnrolled(ctx *gin.Context)
 	UploadBanner(ctx *gin.Context)

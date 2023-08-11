@@ -7,6 +7,7 @@ type CourseInputRequest struct {
 	Description string `json:"description"`
 	Perks       string `json:"perks"`
 	Price       int    `json:"price"`
+	Category    string `json:"category"`
 }
 
 type CourseResponse struct {

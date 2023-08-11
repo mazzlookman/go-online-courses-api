@@ -10,6 +10,35 @@ type CourseRepositoryImpl struct {
 	db *gorm.DB
 }
 
+func (r *CourseRepositoryImpl) FindByCategory(categoryName string) ([]domain.Course, error) {
+	category := domain.Category{}
+	err := r.db.Find(&category, "name=?", categoryName).Error
+
+	courses := []domain.Course{}
+	err = r.db.
+		Joins("JOIN category_courses ON category_courses.course_id=courses.id").
+		Joins("JOIN categories ON category_courses.category_id=categories.id").
+		Where("categories.id=?", category.ID).
+		Find(&courses).Error
+	helper.PanicIfError(err)
+
+	return courses, nil
+}
+
+func (r *CourseRepositoryImpl) SaveToCategoryCourse(categoryName string, courseID int) bool {
+	category := domain.Category{}
+	err := r.db.Find(&category, "name=?", categoryName).Error
+
+	categoryCourse := domain.CategoryCourse{}
+	categoryCourse.CategoryID = category.ID
+	categoryCourse.CourseID = courseID
+
+	err = r.db.Create(&categoryCourse).Error
+	helper.PanicIfError(err)
+
+	return true
+}
+
 func (r *CourseRepositoryImpl) FindByUserID(userID int) ([]domain.Course, error) {
 	courses := []domain.Course{}
 	err := r.db.

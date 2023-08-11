@@ -49,3 +49,13 @@ func TestGetCourseByUserID(t *testing.T) {
 	marshal, _ := json.Marshal(courses)
 	t.Log(string(marshal))
 }
+
+func TestFindByCategoryID(t *testing.T) {
+	courses, err := courseRepository.FindByCategoryID(2)
+	if err != nil {
+		t.Error(err)
+	}
+
+	marshal, _ := json.Marshal(courses)
+	t.Log(string(marshal))
+}

@@ -13,6 +13,14 @@ type CourseControllerImpl struct {
 	service.CourseService
 }
 
+func (c *CourseControllerImpl) GetByCategory(ctx *gin.Context) {
+	courseResponses := c.CourseService.FindByCategory(ctx.Param("categoryName"))
+
+	ctx.JSON(200,
+		helper.APIResponse(200, "List of course", courseResponses),
+	)
+}
+
 func (c *CourseControllerImpl) GetByUserID(ctx *gin.Context) {
 	userID := ctx.MustGet("current_user").(web.UserResponse).ID
 	courseResponses := c.CourseService.FindByUserID(userID)

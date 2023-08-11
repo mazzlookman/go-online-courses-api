@@ -12,6 +12,7 @@ type CourseService interface {
 	FindBySlug(slug string) web.CourseBySlugResponse
 	FindByAuthorID(authorID int) []web.CourseResponse
 	FindByUserID(userID int) []web.CourseResponse
+	FindByCategory(categoryName string) []web.CourseResponse
 	FindAll() []web.CourseResponse
 	UserEnrolled(userID int, courseID int) domain.UserCourse
 }
