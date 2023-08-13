@@ -32,6 +32,11 @@ var (
 	categoryRepository = repository.NewCategoryRepository(db)
 	categoryService    = service.NewCategoryService(categoryRepository)
 	categoryController = controller.NewCategoryController(categoryService)
+
+	//lesson_title
+	lessonTitleRepository = repository.NewLessonTitleRepository(db)
+	lessonTitleService    = service.NewLessonTitleService(lessonTitleRepository, courseService)
+	lessonTitleController = controller.NewLessonTitleController(lessonTitleService)
 )
 
 func NewRouter() *gin.Engine {
@@ -65,5 +70,12 @@ func NewRouter() *gin.Engine {
 
 	// Category endpoints
 	v1.POST("/categories", categoryController.Create)
+
+	// Lesson title endpoints
+	v1.POST("/authors/courses/:courseID/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)
+	v1.PATCH("/authors/courses/:courseID/lesson-titles/:ltID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Update)
+	//add middleware enrolled (later)
+	v1.GET("/enrolled/courses/:courseID/lesson-titles", lessonTitleController.GetByCourseID)
+
 	return router
 }

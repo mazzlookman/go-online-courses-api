@@ -15,7 +15,26 @@ func ErrorHandler(ctx *gin.Context, err any) {
 	if notFoundError(ctx, err) {
 		return
 	}
+
+	if unauthorizedError(ctx, err) {
+		return
+	}
+
 	internalServerError(ctx, err)
+}
+
+func unauthorizedError(ctx *gin.Context, err any) bool {
+	unauthorized, ok := err.(helper.UnauthorizedError)
+	if ok {
+		ctx.Writer.WriteHeader(http.StatusUnauthorized)
+		ctx.AbortWithStatusJSON(
+			http.StatusUnauthorized,
+			helper.APIResponse(http.StatusUnauthorized, "Unauthorized", unauthorized.Error),
+		)
+		return true
+	} else {
+		return false
+	}
 }
 
 func notFoundError(ctx *gin.Context, err any) bool {

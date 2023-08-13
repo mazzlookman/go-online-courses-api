@@ -13,3 +13,11 @@ type NotFoundError struct {
 func NewNotFoundError(error string) NotFoundError {
 	return NotFoundError{Error: error}
 }
+
+type UnauthorizedError struct {
+	Error string
+}
+
+func NewUnauthorizedError(error string) UnauthorizedError {
+	return UnauthorizedError{Error: error}
+}

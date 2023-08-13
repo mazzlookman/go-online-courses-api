@@ -6,7 +6,6 @@ import (
 	"go-pzn-restful-api/auth"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/service"
-	"net/http"
 	"strings"
 )
 
@@ -14,20 +13,14 @@ func UserJwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService
 	return func(ctx *gin.Context) {
 		getHeader := ctx.GetHeader("Authorization")
 		if !strings.Contains(getHeader, "Bearer") {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
-			return
+			panic(helper.NewUnauthorizedError("Who you are, Hah?"))
 		}
 		valueHeader := strings.Split(getHeader, " ")
 		token := valueHeader[1]
 
 		validateJwtToken, err := jwtAuth.ValidateJwtToken(token)
 		if !validateJwtToken.Valid || err != nil {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "Who you are?"))
-			return
+			panic(helper.NewUnauthorizedError("Who you are, Hah?"))
 		}
 
 		claims := validateJwtToken.Claims.(jwt.MapClaims)
@@ -42,28 +35,19 @@ func AuthorJwtAuthMiddleware(jwtAuth auth.JwtAuth, authorService service.AuthorS
 	return func(ctx *gin.Context) {
 		getHeader := ctx.GetHeader("Authorization")
 		if !strings.Contains(getHeader, "Bearer") {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
-			return
+			panic(helper.NewUnauthorizedError("You're not an author"))
 		}
 		valueHeader := strings.Split(getHeader, " ")
 		token := valueHeader[1]
 
 		validateJwtToken, err := jwtAuth.ValidateJwtToken(token)
 		if !validateJwtToken.Valid || err != nil {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
-			return
+			panic(helper.NewUnauthorizedError("You're not an author"))
 		}
 
 		claims := validateJwtToken.Claims.(jwt.MapClaims)
 		if claims["author_id"] == nil {
-			ctx.AbortWithStatusJSON(
-				http.StatusUnauthorized,
-				helper.APIResponse(http.StatusUnauthorized, "Unauthorized", "You're not an author"))
-			return
+			panic(helper.NewUnauthorizedError("You're not an author"))
 		}
 
 		authorID := int(claims["author_id"].(float64))
