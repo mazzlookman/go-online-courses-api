@@ -13,6 +13,15 @@ type LessonContentServiceImpl struct {
 	CourseService
 }
 
+func (s *LessonContentServiceImpl) FindByLessonTitleID(ltID int) []web.LessonContentResponse {
+	lessonContents, err := s.LessonContentRepository.FindByLessonTitleID(ltID)
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
+
+	return helper.ToLessonContentsResponse(lessonContents)
+}
+
 func (s *LessonContentServiceImpl) Update(lcID int, input web.LessonContentCreateInput) web.LessonContentResponse {
 	authorID := s.CourseService.FindByID(input.CourseID).AuthorID
 	if authorID != input.AuthorID {

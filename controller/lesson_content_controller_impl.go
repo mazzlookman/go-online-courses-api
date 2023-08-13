@@ -13,6 +13,17 @@ type LessonContentControllerImpl struct {
 	service.LessonContentService
 }
 
+func (c *LessonContentControllerImpl) GetByLessonTitleID(ctx *gin.Context) {
+	ltID, err := strconv.Atoi(ctx.Param("ltID"))
+	helper.PanicIfError(err)
+
+	lessonContentsResponse := c.LessonContentService.FindByLessonTitleID(ltID)
+
+	ctx.JSON(200,
+		helper.APIResponse(200, "List of lesson contents", lessonContentsResponse),
+	)
+}
+
 func (c *LessonContentControllerImpl) Update(ctx *gin.Context) {
 	input := web.LessonContentCreateInput{}
 	err := ctx.ShouldBind(&input)
