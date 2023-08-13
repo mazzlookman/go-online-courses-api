@@ -2,7 +2,6 @@ package test
 
 import (
 	"go-pzn-restful-api/helper"
-	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"log"
 )
@@ -58,11 +57,11 @@ func DeleteAuthorTest() {
 	log.Println("Author has been deleted")
 }
 
-func GetAuthorByID(id int) domain.Author {
-	author, err := AuthorRepository.FindByID(id)
-	if err != nil {
-		log.Fatalln(err)
-	}
+func GetAuthorToken() string {
+	login := AuthorService.Login(web.AuthorLoginInput{
+		Email:    "author@author.com",
+		Password: "123",
+	})
 
-	return author
+	return login.Token
 }
