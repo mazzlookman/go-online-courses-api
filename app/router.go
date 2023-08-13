@@ -13,30 +13,35 @@ var (
 	jwtAuth = auth.NewJwtAuth()
 	db      = DBConnection()
 
-	//user
+	// user
 	userRepository = repository.NewUserRepository(db)
 	userService    = service.NewUserService(userRepository, jwtAuth)
 	userController = controller.NewUserController(userService)
 
-	//author
+	// author
 	authorRepository = repository.NewAuthorRepository(db)
 	authorService    = service.NewAuthorService(authorRepository, jwtAuth)
 	authorController = controller.NewAuthorController(authorService)
 
-	//course
+	// course
 	courseRepository = repository.NewCourseRepository(db)
 	courseService    = service.NewCourseService(courseRepository)
 	courseController = controller.NewCourseController(courseService)
 
-	//category
+	// category
 	categoryRepository = repository.NewCategoryRepository(db)
 	categoryService    = service.NewCategoryService(categoryRepository)
 	categoryController = controller.NewCategoryController(categoryService)
 
-	//lesson_title
+	// lesson_title
 	lessonTitleRepository = repository.NewLessonTitleRepository(db)
 	lessonTitleService    = service.NewLessonTitleService(lessonTitleRepository, courseService)
 	lessonTitleController = controller.NewLessonTitleController(lessonTitleService)
+
+	// lesson_content
+	lessonContentRepository = repository.NewLessonContentRepository(db)
+	lessonContentService    = service.NewLessonContentService(lessonContentRepository, courseService)
+	lessonContentController = controller.NewLessonContentController(lessonContentService)
 )
 
 func NewRouter() *gin.Engine {
@@ -76,6 +81,10 @@ func NewRouter() *gin.Engine {
 	v1.PATCH("/authors/courses/:courseID/lesson-titles/:ltID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Update)
 	//add middleware enrolled (later)
 	v1.GET("/enrolled/courses/:courseID/lesson-titles", lessonTitleController.GetByCourseID)
+
+	// Lesson content endpoints
+	v1.POST("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
+	v1.PATCH("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents/:lcID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
 
 	return router
 }

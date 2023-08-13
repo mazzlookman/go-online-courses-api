@@ -38,7 +38,6 @@ func (s *LessonTitleServiceImpl) FindByCourseID(courseID int) []web.LessonTitleR
 }
 
 func (s *LessonTitleServiceImpl) Create(input web.LessonTitleCreateInput) web.LessonTitleResponse {
-
 	lt := domain.LessonTitle{}
 	lt.CourseID = input.CourseID
 	lt.Title = input.Title

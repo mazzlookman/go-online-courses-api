@@ -58,3 +58,22 @@ func ToCourseBySlugResponse(course domain.Course, countUserEnrolled int) web.Cou
 
 	return courseResponse
 }
+
+func ToLessonContentResponse(content domain.LessonContent) web.LessonContentResponse {
+	return web.LessonContentResponse{
+		ID:            content.ID,
+		LessonTitleID: content.LessonTitleID,
+		Content:       content.Content,
+		InOrder:       content.InOrder,
+		Duration:      content.Duration,
+	}
+}
+
+func ToLessonContentsResponse(contents []domain.LessonContent) []web.LessonContentResponse {
+	lessonContents := []web.LessonContentResponse{}
+	for _, content := range contents {
+		lessonContents = append(lessonContents, ToLessonContentResponse(content))
+	}
+
+	return lessonContents
+}
