@@ -124,3 +124,26 @@ func DeleteCategoryCoursesTest() {
 	log.Println("Category_courses has been deleted, rows affected: ", rowsAffected)
 	//tx := Db.Delete(&domain.CategoryCourse{})
 }
+
+func GetCourseTest() web.CourseResponse {
+	CreateCategoryTest()
+	authorTest := CreateAuthorTest()
+	return CreateCourseTest(authorTest.ID)
+}
+
+// Lesson Title
+func DeleteLessonTitleTest() {
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from lesson_titles")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Lesson titles has been deleted, rows affected: ", rowsAffected)
+}
+
+func CreateLessonTitleTest(courseID int, authorID int) web.LessonTitleResponse {
+	return LessonTitleService.Create(web.LessonTitleCreateInput{
+		CourseID: courseID,
+		Title:    "title1",
+		InOrder:  1,
+		AuthorID: authorID,
+	})
+}

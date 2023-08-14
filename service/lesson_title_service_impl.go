@@ -43,8 +43,8 @@ func (s *LessonTitleServiceImpl) Create(input web.LessonTitleCreateInput) web.Le
 	lt.Title = input.Title
 	lt.InOrder = input.InOrder
 
-	authorID := s.CourseService.FindByID(input.CourseID).AuthorID
-	if authorID != input.AuthorID {
+	course := s.CourseService.FindByID(input.CourseID)
+	if course.AuthorID != input.AuthorID {
 		panic(helper.NewUnauthorizedError("You're not an author for this courses"))
 	}
 

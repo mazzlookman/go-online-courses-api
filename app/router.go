@@ -70,7 +70,7 @@ func NewRouter() *gin.Engine {
 	v1.GET("/courses/:slug", courseController.GetBySlug)
 	v1.GET("/courses", courseController.GetAll)
 	v1.GET("/courses/categories/:categoryName", courseController.GetByCategory)
-	v1.GET("/courses/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
+	v1.GET("/enrolled/courses", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
 	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	// Category endpoints

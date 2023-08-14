@@ -40,3 +40,8 @@ var (
 	CourseService    = service.NewCourseService(CourseRepository)
 	CourseController = controller.NewCourseController(CourseService)
 )
+
+var (
+	LessonTitleRepository = repository.NewLessonTitleRepository(Db)
+	LessonTitleService    = service.NewLessonTitleService(LessonTitleRepository, CourseService)
+)

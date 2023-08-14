@@ -482,7 +482,7 @@ func TestGetByUserIDSuccess(t *testing.T) {
 	defer DeleteUserTest()
 	defer DeleteUserCoursesTest()
 
-	req := httptest.NewRequest("GET", "/api/v1/courses/enrolled", nil)
+	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
@@ -514,7 +514,7 @@ func TestGetByUserIDErrorCoursesNotFound(t *testing.T) {
 	defer DeleteCategoryCoursesTest()
 	defer DeleteUserTest()
 
-	req := httptest.NewRequest("GET", "/api/v1/courses/enrolled", nil)
+	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
@@ -530,13 +530,13 @@ func TestGetByUserIDErrorCoursesNotFound(t *testing.T) {
 }
 
 func TestGetByUserIDErrorUnauthorized(t *testing.T) {
-	req := httptest.NewRequest("GET", "/api/v1/courses/enrolled", nil)
+	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses", nil)
 	//req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
 	Router.ServeHTTP(w, req)
-	response := w.Result()
 
+	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
 	var mapResponse map[string]interface{}
 	json.Unmarshal(body, &mapResponse)
