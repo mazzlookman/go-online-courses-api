@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"gorm.io/gorm"
@@ -20,7 +21,9 @@ func (r *CourseRepositoryImpl) FindByCategory(categoryName string) ([]domain.Cou
 		Joins("JOIN categories ON category_courses.category_id=categories.id").
 		Where("categories.id=?", category.ID).
 		Find(&courses).Error
-	helper.PanicIfError(err)
+	if len(courses) == 0 || err != nil {
+		return nil, errors.New("Courses is not found")
+	}
 
 	return courses, nil
 }
@@ -46,7 +49,9 @@ func (r *CourseRepositoryImpl) FindByUserID(userID int) ([]domain.Course, error)
 		Joins("JOIN users ON users.id=user_courses.user_id").
 		Where("users.id=?", userID).
 		Find(&courses).Error
-	helper.PanicIfError(err)
+	if len(courses) == 0 || err != nil {
+		return nil, errors.New("Courses is not found")
+	}
 	return courses, nil
 }
 
@@ -75,7 +80,9 @@ func (r *CourseRepositoryImpl) UsersEnrolled(userCourse domain.UserCourse) (doma
 func (r *CourseRepositoryImpl) FindAll() ([]domain.Course, error) {
 	courses := []domain.Course{}
 	err := r.db.Find(&courses).Error
-	helper.PanicIfError(err)
+	if len(courses) == 0 || err != nil {
+		return nil, errors.New("Courses is not found")
+	}
 
 	return courses, nil
 }
@@ -83,15 +90,18 @@ func (r *CourseRepositoryImpl) FindAll() ([]domain.Course, error) {
 func (r *CourseRepositoryImpl) FindByAuthorID(authorID int) ([]domain.Course, error) {
 	courses := []domain.Course{}
 	err := r.db.Find(&courses, "author_id=?", authorID).Error
-	helper.PanicIfError(err)
-
+	if err != nil || len(courses) == 0 {
+		return nil, errors.New("Courses is not found")
+	}
 	return courses, nil
 }
 
 func (r *CourseRepositoryImpl) FindBySlug(slug string) (domain.Course, error) {
 	course := domain.Course{}
-	err := r.db.Preload("Users").Preload("Author").Find(&course, "slug=?", slug).Error
-	helper.PanicIfError(err)
+	err := r.db.Preload("Author").Find(&course, "slug=?", slug).Error
+	if course.ID == 0 || err != nil {
+		return course, errors.New("Course is not found")
+	}
 
 	return course, nil
 }
@@ -99,7 +109,9 @@ func (r *CourseRepositoryImpl) FindBySlug(slug string) (domain.Course, error) {
 func (r *CourseRepositoryImpl) FindByID(courseID int) (domain.Course, error) {
 	course := domain.Course{}
 	err := r.db.Find(&course, "id=?", courseID).Error
-	helper.PanicIfError(err)
+	if err != nil || course.ID == 0 {
+		return course, errors.New("Course is not found")
+	}
 
 	return course, nil
 }

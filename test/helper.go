@@ -1,7 +1,6 @@
 package test
 
 import (
-	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"log"
@@ -19,12 +18,10 @@ func CreateUserTest() web.UserResponse {
 }
 
 func DeleteUserTest() {
-	err := UserRepository.Delete("user")
-	if err != nil {
-		helper.PanicIfError(err)
-	}
-
-	log.Println("User deleted")
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from users")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("User has been deleted, rows affected: ", rowsAffected)
 }
 
 func GetTokenAfterLogin() string {
@@ -34,6 +31,13 @@ func GetTokenAfterLogin() string {
 	})
 
 	return login.Token
+}
+
+func DeleteUserCoursesTest() {
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from user_courses")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("User courses has been deleted, rows affected: ", rowsAffected)
 }
 
 // Author
@@ -51,11 +55,11 @@ func CreateAuthorTest() web.AuthorResponse {
 }
 
 func DeleteAuthorTest() {
-	err := AuthorRepository.Delete("author@author.com")
-	if err != nil {
-		log.Fatalln(err.Error())
-	}
-	log.Println("Author has been deleted")
+	//err := AuthorRepository.Delete("author@author.com")
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from authors")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Authors has been deleted, rows affected: ", rowsAffected)
 }
 
 func GetAuthorToken() string {
@@ -68,11 +72,55 @@ func GetAuthorToken() string {
 }
 
 // Category
-func CreateCategory() web.CategoryResponse {
+func CreateCategoryTest() web.CategoryResponse {
 	return CategoryService.Create(web.CategoryCreateInput{Name: "backend"})
 }
 
-func DeleteCategory() {
-	tx := Db.Delete(&domain.Category{}, "name=?", "backend")
-	log.Println("Category deleted, rows affected: ", tx.RowsAffected)
+func DeleteCategoryTest() {
+	//tx := Db.Delete(&domain.Category{}, "name=?", "backend")
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from categories")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Category has been deleted, rows affected: ", rowsAffected)
+}
+
+// Course
+func CreateCourseTest(authorID int) web.CourseResponse {
+	return CourseService.Create(web.CourseCreateInput{
+		AuthorID:    authorID,
+		Title:       "Golang",
+		Slug:        "golang",
+		Description: "Desc",
+		Perks:       "p1,p2,p3",
+		Price:       99000,
+		Category:    "backend",
+	})
+}
+
+func CreateUserCoursesTest(userID int, courseID int) domain.UserCourse {
+	userCourse, err := CourseRepository.UsersEnrolled(domain.UserCourse{
+		CourseID: courseID,
+		UserID:   userID,
+	})
+
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return userCourse
+}
+
+func DeleteCourseTest() {
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from courses")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Course has been deleted, rows affected: ", rowsAffected)
+}
+
+func DeleteCategoryCoursesTest() {
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from category_courses")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Category_courses has been deleted, rows affected: ", rowsAffected)
+	//tx := Db.Delete(&domain.CategoryCourse{})
 }

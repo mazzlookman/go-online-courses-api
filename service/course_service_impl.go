@@ -34,7 +34,7 @@ func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResp
 func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
 	courses, err := s.CourseRepository.FindByUserID(userID)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}
@@ -50,7 +50,7 @@ func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
 func (s *CourseServiceImpl) UploadBanner(courseID int, pathFile string) bool {
 	findByID, err := s.CourseRepository.FindByID(courseID)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	if findByID.Banner != pathFile {
@@ -65,6 +65,11 @@ func (s *CourseServiceImpl) UploadBanner(courseID int, pathFile string) bool {
 }
 
 func (s *CourseServiceImpl) UserEnrolled(userID int, courseID int) domain.UserCourse {
+	_, err := s.CourseRepository.FindByID(courseID)
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
+
 	userCourse := domain.UserCourse{
 		CourseID: courseID,
 		UserID:   userID,
@@ -95,7 +100,7 @@ func (s *CourseServiceImpl) FindAll() []web.CourseResponse {
 func (s *CourseServiceImpl) FindByAuthorID(authorID int) []web.CourseResponse {
 	courses, err := s.CourseRepository.FindByAuthorID(authorID)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}
@@ -111,7 +116,7 @@ func (s *CourseServiceImpl) FindByAuthorID(authorID int) []web.CourseResponse {
 func (s *CourseServiceImpl) FindBySlug(slug string) web.CourseBySlugResponse {
 	findBySlug, err := s.CourseRepository.FindBySlug(slug)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Course is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findBySlug.ID)
@@ -138,7 +143,7 @@ func (s *CourseServiceImpl) Create(request web.CourseCreateInput) web.CourseResp
 	}
 
 	if course.AuthorID == 0 {
-		panic(helper.NewNotFoundError("You're not an author"))
+		panic(helper.NewUnauthorizedError("You're not an author"))
 	}
 
 	save := s.CourseRepository.Save(course)

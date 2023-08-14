@@ -14,7 +14,7 @@ func TestCreateCategorySuccess(t *testing.T) {
 	CreateAuthorTest()
 	token := GetAuthorToken()
 	defer DeleteAuthorTest()
-	defer DeleteCategory()
+	defer DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":"backend"}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
@@ -37,7 +37,7 @@ func TestCreateCategoryErrorUnauthorized(t *testing.T) {
 	CreateAuthorTest()
 	token := GetAuthorToken()
 	defer DeleteAuthorTest()
-	defer DeleteCategory()
+	defer DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":"backend"}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
@@ -59,7 +59,7 @@ func TestCreateCategoryErrorValidation(t *testing.T) {
 	CreateAuthorTest()
 	token := GetAuthorToken()
 	defer DeleteAuthorTest()
-	defer DeleteCategory()
+	defer DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":""}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
