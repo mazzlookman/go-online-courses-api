@@ -74,7 +74,7 @@ func NewRouter() *gin.Engine {
 	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	// Category endpoints
-	v1.POST("/categories", categoryController.Create)
+	v1.POST("/categories", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), categoryController.Create)
 
 	// Lesson title endpoints
 	v1.POST("/authors/courses/:courseID/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)

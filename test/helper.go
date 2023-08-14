@@ -2,6 +2,7 @@ package test
 
 import (
 	"go-pzn-restful-api/helper"
+	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"log"
 )
@@ -64,4 +65,14 @@ func GetAuthorToken() string {
 	})
 
 	return login.Token
+}
+
+// Category
+func CreateCategory() web.CategoryResponse {
+	return CategoryService.Create(web.CategoryCreateInput{Name: "backend"})
+}
+
+func DeleteCategory() {
+	tx := Db.Delete(&domain.Category{}, "name=?", "backend")
+	log.Println("Category deleted, rows affected: ", tx.RowsAffected)
 }

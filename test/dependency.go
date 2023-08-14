@@ -21,16 +21,22 @@ var (
 	UserController = controller.NewUserController(UserService)
 )
 
-// Course
-var (
-	CourseRepository = repository.NewCourseRepository(Db)
-	CourseService    = service.NewCourseService(CourseRepository)
-	CourseController = controller.NewCourseController(CourseService)
-)
-
 // Author
 var (
 	AuthorRepository = repository.NewAuthorRepository(Db)
 	AuthorService    = service.NewAuthorService(AuthorRepository, JwtAuth)
 	AuthorController = controller.NewAuthorController(AuthorService)
+)
+
+var (
+	CategoryRepository = repository.NewCategoryRepository(Db)
+	CategoryService    = service.NewCategoryService(CategoryRepository)
+	CategoryController = controller.NewCategoryController(CategoryService)
+)
+
+// Course
+var (
+	CourseRepository = repository.NewCourseRepository(Db)
+	CourseService    = service.NewCourseService(CourseRepository)
+	CourseController = controller.NewCourseController(CourseService)
 )

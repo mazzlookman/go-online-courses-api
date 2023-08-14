@@ -127,7 +127,7 @@ func (s *CourseServiceImpl) FindByID(courseID int) web.CourseResponse {
 	return helper.ToCourseResponse(findByID, countUsersEnrolled)
 }
 
-func (s *CourseServiceImpl) Create(request web.CourseInputRequest) web.CourseResponse {
+func (s *CourseServiceImpl) Create(request web.CourseCreateInput) web.CourseResponse {
 	course := domain.Course{
 		AuthorID:    request.AuthorID,
 		Title:       request.Title,

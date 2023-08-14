@@ -1,7 +1,7 @@
 package web
 
 type CategoryCreateInput struct {
-	Name string `json:"name"`
+	Name string `json:"name" binding:"required"`
 }
 
 type CategoryResponse struct {

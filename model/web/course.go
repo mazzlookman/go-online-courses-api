@@ -1,6 +1,6 @@
 package web
 
-type CourseInputRequest struct {
+type CourseCreateInput struct {
 	AuthorID    int
 	Title       string `json:"title"`
 	Slug        string `json:"slug"`

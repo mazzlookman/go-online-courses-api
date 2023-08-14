@@ -83,7 +83,7 @@ func (c *CourseControllerImpl) GetBySlug(ctx *gin.Context) {
 }
 
 func (c *CourseControllerImpl) Create(ctx *gin.Context) {
-	request := web.CourseInputRequest{}
+	request := web.CourseCreateInput{}
 	err := ctx.ShouldBindJSON(&request)
 	helper.PanicIfError(err)
 
