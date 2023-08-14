@@ -2,8 +2,8 @@ package web
 
 type LessonTitleCreateInput struct {
 	CourseID int
-	Title    string `json:"title"`
-	InOrder  int    `json:"in_order"`
+	Title    string `json:"title" binding:"required"`
+	InOrder  int    `json:"in_order" binding:"required"`
 	AuthorID int
 }
 
