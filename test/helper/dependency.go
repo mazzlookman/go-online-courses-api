@@ -1,4 +1,4 @@
-package test
+package helper
 
 import (
 	"go-pzn-restful-api/app"
@@ -44,4 +44,9 @@ var (
 var (
 	LessonTitleRepository = repository.NewLessonTitleRepository(Db)
 	LessonTitleService    = service.NewLessonTitleService(LessonTitleRepository, CourseService)
+)
+
+var (
+	LessonContentRepository = repository.NewLessonContentRepository(Db)
+	LessonContentService    = service.NewLessonContentService(LessonContentRepository, CourseService)
 )

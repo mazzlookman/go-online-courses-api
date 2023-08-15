@@ -23,9 +23,9 @@ func (s *LessonContentServiceImpl) FindByLessonTitleID(ltID int) []web.LessonCon
 }
 
 func (s *LessonContentServiceImpl) Update(lcID int, input web.LessonContentCreateInput) web.LessonContentResponse {
-	authorID := s.CourseService.FindByID(input.CourseID).AuthorID
-	if authorID != input.AuthorID {
-		panic(helper.NewUnauthorizedError("You're not an author for this courses"))
+	course := s.CourseService.FindByID(input.CourseID)
+	if course.AuthorID != input.AuthorID {
+		panic(helper.NewUnauthorizedError("You're not an author of this courses"))
 	}
 
 	findByID, err := s.LessonContentRepository.FindByID(lcID)
@@ -55,9 +55,9 @@ func (s *LessonContentServiceImpl) Update(lcID int, input web.LessonContentCreat
 }
 
 func (s *LessonContentServiceImpl) Create(input web.LessonContentCreateInput) web.LessonContentResponse {
-	authorID := s.CourseService.FindByID(input.CourseID).AuthorID
-	if authorID != input.AuthorID {
-		panic(helper.NewUnauthorizedError("You're not an author for this courses"))
+	course := s.CourseService.FindByID(input.CourseID)
+	if course.AuthorID != input.AuthorID {
+		panic(helper.NewUnauthorizedError("You're not an author of this courses"))
 	}
 
 	lessonContent := domain.LessonContent{}

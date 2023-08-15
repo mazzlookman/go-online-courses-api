@@ -126,7 +126,7 @@ func (s *CourseServiceImpl) FindBySlug(slug string) web.CourseBySlugResponse {
 func (s *CourseServiceImpl) FindByID(courseID int) web.CourseResponse {
 	findByID, err := s.CourseRepository.FindByID(courseID)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Course is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findByID.ID)
 	return helper.ToCourseResponse(findByID, countUsersEnrolled)

@@ -109,8 +109,8 @@ func (r *CourseRepositoryImpl) FindBySlug(slug string) (domain.Course, error) {
 func (r *CourseRepositoryImpl) FindByID(courseID int) (domain.Course, error) {
 	course := domain.Course{}
 	err := r.db.Find(&course, "id=?", courseID).Error
-	if err != nil || course.ID == 0 {
-		return course, errors.New("Course is not found")
+	if course.ID == 0 || err != nil {
+		return course, errors.New("Course not found")
 	}
 
 	return course, nil

@@ -13,8 +13,8 @@ type LessonContentRepositoryImpl struct {
 func (r *LessonContentRepositoryImpl) FindByLessonTitleID(ltID int) ([]domain.LessonContent, error) {
 	lessonContents := []domain.LessonContent{}
 	err := r.db.Order("in_order asc").Find(&lessonContents, "lesson_title_id=?", ltID).Error
-	if err != nil {
-		return nil, errors.New("Lesson contents is not found")
+	if len(lessonContents) == 0 || err != nil {
+		return nil, errors.New("Lesson contents not found")
 	}
 
 	return lessonContents, nil
@@ -31,8 +31,8 @@ func (r *LessonContentRepositoryImpl) Update(content domain.LessonContent) (doma
 func (r *LessonContentRepositoryImpl) FindByID(lcID int) (domain.LessonContent, error) {
 	lc := domain.LessonContent{}
 	err := r.db.Find(&lc, "id=?", lcID).Error
-	if err != nil {
-		return lc, errors.New("Lesson content is not found")
+	if lc.ID == 0 || err != nil {
+		return lc, errors.New("Lesson content not found")
 	}
 	return lc, nil
 }

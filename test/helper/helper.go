@@ -1,9 +1,11 @@
-package test
+package helper
 
 import (
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
+	"io"
 	"log"
+	"os"
 )
 
 // User
@@ -146,4 +148,29 @@ func CreateLessonTitleTest(courseID int, authorID int) web.LessonTitleResponse {
 		InOrder:  1,
 		AuthorID: authorID,
 	})
+}
+
+// Lesson Content
+func CreateLessonContentTest(authorID int, courseID int, ltID int) web.LessonContentResponse {
+	pathFile := `D:\CodingTraining\Coding_Tutor\GO\Dasar\Belajar_Go-Lang_-_1_Pengenalan_Go-Lang.mov`
+	create, _ := os.Create("assets/contents/content.mov")
+	open, _ := os.Open(pathFile)
+	io.Copy(create, open)
+	create.Close()
+	open.Close()
+
+	return LessonContentService.Create(web.LessonContentCreateInput{
+		AuthorID:      authorID,
+		CourseID:      courseID,
+		LessonTitleID: ltID,
+		Content:       "assets/contents/content.mov",
+		InOrder:       1,
+	})
+}
+
+func DeleteLessonContentTest() {
+	db, _ := Db.DB()
+	result, _ := db.Exec("delete from lesson_contents")
+	rowsAffected, _ := result.RowsAffected()
+	log.Println("Lesson content has been deleted, rows affected: ", rowsAffected)
 }

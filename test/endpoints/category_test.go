@@ -1,9 +1,10 @@
-package test
+package endpoints
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go-pzn-restful-api/test/helper"
 	"io"
 	"net/http/httptest"
 	"strings"
@@ -11,17 +12,17 @@ import (
 )
 
 func TestCreateCategorySuccess(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
-	defer DeleteAuthorTest()
-	defer DeleteCategoryTest()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":"backend"}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -34,17 +35,17 @@ func TestCreateCategorySuccess(t *testing.T) {
 }
 
 func TestCreateCategoryErrorUnauthorized(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
-	defer DeleteAuthorTest()
-	defer DeleteCategoryTest()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":"backend"}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
 	req.Header.Add("Authorization", "Bear "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -56,17 +57,17 @@ func TestCreateCategoryErrorUnauthorized(t *testing.T) {
 }
 
 func TestCreateCategoryErrorValidation(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
-	defer DeleteAuthorTest()
-	defer DeleteCategoryTest()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCategoryTest()
 
 	request := strings.NewReader(`{"name":""}`)
 	req := httptest.NewRequest("POST", "/api/v1/categories", request)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)

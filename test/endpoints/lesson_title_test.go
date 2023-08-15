@@ -1,9 +1,10 @@
-package test
+package endpoints
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go-pzn-restful-api/test/helper"
 	"io"
 	"log"
 	"net/http/httptest"
@@ -12,20 +13,20 @@ import (
 	"testing"
 )
 
-func deleteAllInDatabase() {
-	DeleteLessonTitleTest()
-	DeleteCategoryCoursesTest()
-	DeleteCourseTest()
-	DeleteAuthorTest()
-	DeleteCategoryTest()
+func deleteAllLessonTitles() {
+	helper.DeleteLessonTitleTest()
+	helper.DeleteCategoryCoursesTest()
+	helper.DeleteCourseTest()
+	helper.DeleteAuthorTest()
+	helper.DeleteCategoryTest()
 	log.Println("All data in database has been deleted")
 }
 
 func TestCreateLessonTitleSuccess(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "title1","in_order": 1}`)
 
@@ -33,7 +34,7 @@ func TestCreateLessonTitleSuccess(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -46,10 +47,10 @@ func TestCreateLessonTitleSuccess(t *testing.T) {
 }
 
 func TestCreateLessonTitleErrorValidation(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "","in_order": 1}`)
 
@@ -57,7 +58,7 @@ func TestCreateLessonTitleErrorValidation(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -69,10 +70,10 @@ func TestCreateLessonTitleErrorValidation(t *testing.T) {
 }
 
 func TestCreateLessonTitleErrorCourseNotFound(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "title1","in_order": 1}`)
 
@@ -80,7 +81,7 @@ func TestCreateLessonTitleErrorCourseNotFound(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -98,7 +99,7 @@ func TestCreateLessonTitleErrorUnauthorized(t *testing.T) {
 	//req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -110,11 +111,11 @@ func TestCreateLessonTitleErrorUnauthorized(t *testing.T) {
 }
 
 func TestUpdateLessonTitleSuccess(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
-	lessonTitleTest := CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "title1","in_order": 2}`)
 
@@ -122,7 +123,7 @@ func TestUpdateLessonTitleSuccess(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -136,11 +137,11 @@ func TestUpdateLessonTitleSuccess(t *testing.T) {
 }
 
 func TestUpdateLessonTitleErrorValidation(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
-	lessonTitleTest := CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "","in_order": 2}`)
 
@@ -148,7 +149,7 @@ func TestUpdateLessonTitleErrorValidation(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -160,11 +161,11 @@ func TestUpdateLessonTitleErrorValidation(t *testing.T) {
 }
 
 func TestUpdateLessonTitleErrorNotFound(t *testing.T) {
-	courseTest := GetCourseTest()
-	authorToken := GetAuthorToken()
-	lessonTitleTest := CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	courseTest := helper.GetCourseTest()
+	authorToken := helper.GetAuthorToken()
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	request := strings.NewReader(`{"title": "title1","in_order": 2}`)
 
@@ -172,7 +173,7 @@ func TestUpdateLessonTitleErrorNotFound(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -190,7 +191,7 @@ func TestUpdateLessonTitleErrorUnauthorized(t *testing.T) {
 	//req.Header.Add("Authorization", "Bearer "+authorToken)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -202,15 +203,15 @@ func TestUpdateLessonTitleErrorUnauthorized(t *testing.T) {
 }
 
 func TestGetByCourseIDSuccess(t *testing.T) {
-	course := GetCourseTest()
-	CreateLessonTitleTest(course.ID, course.AuthorID)
+	course := helper.GetCourseTest()
+	helper.CreateLessonTitleTest(course.ID, course.AuthorID)
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses/"+strconv.Itoa(course.ID)+"/lesson-titles", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
@@ -223,15 +224,15 @@ func TestGetByCourseIDSuccess(t *testing.T) {
 }
 
 func TestGetByCourseIDErrorCourseNotFound(t *testing.T) {
-	course := GetCourseTest()
-	CreateLessonTitleTest(course.ID, course.AuthorID)
+	course := helper.GetCourseTest()
+	helper.CreateLessonTitleTest(course.ID, course.AuthorID)
 
-	defer deleteAllInDatabase()
+	defer deleteAllLessonTitles()
 
 	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses/"+strconv.Itoa(course.ID+1)+"/lesson-titles", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)

@@ -1,10 +1,11 @@
-package test
+package endpoints
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go-pzn-restful-api/test/helper"
 	"io"
 	"log"
 	"mime/multipart"
@@ -14,7 +15,7 @@ import (
 )
 
 func TestAuthorRegisterSuccess(t *testing.T) {
-	defer DeleteAuthorTest()
+	defer helper.DeleteAuthorTest()
 	body := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(body)
 	multipartWriter.WriteField("name", "author")
@@ -27,7 +28,7 @@ func TestAuthorRegisterSuccess(t *testing.T) {
 	req := httptest.NewRequest("POST", "/api/v1/authors", body)
 	req.Header.Add("Content-Type", multipartWriter.FormDataContentType())
 	w := httptest.NewRecorder()
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -41,13 +42,13 @@ func TestAuthorRegisterSuccess(t *testing.T) {
 }
 
 func TestAuthorLoginSuccess(t *testing.T) {
-	CreateAuthorTest()
-	defer DeleteAuthorTest()
+	helper.CreateAuthorTest()
+	defer helper.DeleteAuthorTest()
 	reqBody := strings.NewReader(`{"email": "author@author.com","password": "123"}`)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/api/v1/authors/login", reqBody)
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -62,13 +63,13 @@ func TestAuthorLoginSuccess(t *testing.T) {
 }
 
 func TestAuthorLoginErrorValidation(t *testing.T) {
-	CreateAuthorTest()
-	defer DeleteAuthorTest()
+	helper.CreateAuthorTest()
+	defer helper.DeleteAuthorTest()
 	reqBody := strings.NewReader(`{"email": "authorauthor.com","password": ""}`)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/api/v1/authors/login", reqBody)
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -81,13 +82,13 @@ func TestAuthorLoginErrorValidation(t *testing.T) {
 }
 
 func TestAuthorLoginErrorUsernameOrPasswordIsWrong(t *testing.T) {
-	CreateAuthorTest()
-	defer DeleteAuthorTest()
+	helper.CreateAuthorTest()
+	defer helper.DeleteAuthorTest()
 	reqBody := strings.NewReader(`{"email": "a@author.com","password": "123"}`)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/api/v1/authors/login", reqBody)
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -100,14 +101,14 @@ func TestAuthorLoginErrorUsernameOrPasswordIsWrong(t *testing.T) {
 }
 
 func TestAuthorLogoutSuccess(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
-	defer DeleteAuthorTest()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
+	defer helper.DeleteAuthorTest()
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/api/v1/authors/logout", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -120,14 +121,14 @@ func TestAuthorLogoutSuccess(t *testing.T) {
 }
 
 func TestAuthorLogoutErrorUnauthorized(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
-	defer DeleteAuthorTest()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
+	defer helper.DeleteAuthorTest()
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("POST", "/api/v1/authors/logout", nil)
 	req.Header.Add("Authorization", "Bear "+token)
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)

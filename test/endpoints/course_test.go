@@ -1,10 +1,11 @@
-package test
+package endpoints
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go-pzn-restful-api/test/helper"
 	"io"
 	"log"
 	"mime/multipart"
@@ -16,14 +17,14 @@ import (
 )
 
 func TestCreateCourseSuccess(t *testing.T) {
-	CreateAuthorTest()
-	CreateCategoryTest()
-	token := GetAuthorToken()
+	helper.CreateAuthorTest()
+	helper.CreateCategoryTest()
+	token := helper.GetAuthorToken()
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	request := strings.NewReader(`{
 							  "title": "Golang",
@@ -38,7 +39,7 @@ func TestCreateCourseSuccess(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -51,14 +52,14 @@ func TestCreateCourseSuccess(t *testing.T) {
 }
 
 func TestCreateCourseErrorValidation(t *testing.T) {
-	CreateAuthorTest()
-	CreateCategoryTest()
-	token := GetAuthorToken()
+	helper.CreateAuthorTest()
+	helper.CreateCategoryTest()
+	token := helper.GetAuthorToken()
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	request := strings.NewReader(`{
 							  "title": "",
@@ -73,7 +74,7 @@ func TestCreateCourseErrorValidation(t *testing.T) {
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -85,13 +86,13 @@ func TestCreateCourseErrorValidation(t *testing.T) {
 }
 
 func TestCreateCourseErrorUnauthorized(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	request := strings.NewReader(`{
 							  "title": "",
@@ -106,7 +107,7 @@ func TestCreateCourseErrorUnauthorized(t *testing.T) {
 	req.Header.Add("Authorization", "Bear "+token)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -118,15 +119,15 @@ func TestCreateCourseErrorUnauthorized(t *testing.T) {
 }
 
 func TestUploadBannerSuccess(t *testing.T) {
-	CreateCategoryTest()
-	authorTest := CreateAuthorTest()
-	courseTest := CreateCourseTest(authorTest.ID)
-	token := GetAuthorToken()
+	helper.CreateCategoryTest()
+	authorTest := helper.CreateAuthorTest()
+	courseTest := helper.CreateCourseTest(authorTest.ID)
+	token := helper.GetAuthorToken()
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	request := new(bytes.Buffer)
 	writer := multipart.NewWriter(request)
@@ -141,7 +142,7 @@ func TestUploadBannerSuccess(t *testing.T) {
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -168,7 +169,7 @@ func TestUploadBannerErrorUnauthorized(t *testing.T) {
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	//req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -181,10 +182,10 @@ func TestUploadBannerErrorUnauthorized(t *testing.T) {
 }
 
 func TestUploadBannerErrorCourseNotFound(t *testing.T) {
-	CreateAuthorTest()
-	token := GetAuthorToken()
+	helper.CreateAuthorTest()
+	token := helper.GetAuthorToken()
 
-	defer DeleteAuthorTest()
+	defer helper.DeleteAuthorTest()
 
 	request := new(bytes.Buffer)
 	writer := multipart.NewWriter(request)
@@ -199,7 +200,7 @@ func TestUploadBannerErrorCourseNotFound(t *testing.T) {
 	req.Header.Add("Content-Type", writer.FormDataContentType())
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	bytes, _ := io.ReadAll(response.Body)
@@ -212,19 +213,19 @@ func TestUploadBannerErrorCourseNotFound(t *testing.T) {
 }
 
 func TestGetByAuthorIdSuccess(t *testing.T) {
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses/authors/"+strconv.Itoa(author.ID), nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -237,19 +238,19 @@ func TestGetByAuthorIdSuccess(t *testing.T) {
 }
 
 func TestGetByAuthorIdErrorCoursesNotFound(t *testing.T) {
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses/authors/"+strconv.Itoa(author.ID+1), nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -261,19 +262,19 @@ func TestGetByAuthorIdErrorCoursesNotFound(t *testing.T) {
 }
 
 func TestGetBySlugSuccess(t *testing.T) {
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	courseTest := CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	courseTest := helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses/"+courseTest.Slug, nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -286,19 +287,19 @@ func TestGetBySlugSuccess(t *testing.T) {
 }
 
 func TestGetBySlugErrorCourseNotFound(t *testing.T) {
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses/notfound", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -310,19 +311,19 @@ func TestGetBySlugErrorCourseNotFound(t *testing.T) {
 }
 
 func TestGetAllSuccess(t *testing.T) {
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -338,7 +339,7 @@ func TestGetAllErrorCoursesNotFound(t *testing.T) {
 	req := httptest.NewRequest("GET", "/api/v1/courses", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -350,19 +351,19 @@ func TestGetAllErrorCoursesNotFound(t *testing.T) {
 }
 
 func TestGetByCategorySuccess(t *testing.T) {
-	categoryTest := CreateCategoryTest()
-	author := CreateAuthorTest()
-	CreateCourseTest(author.ID)
+	categoryTest := helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/courses/categories/"+categoryTest.Name, nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -378,7 +379,7 @@ func TestGetByCategoryErrorCoursesNotFound(t *testing.T) {
 	req := httptest.NewRequest("GET", "/api/v1/courses/categories/notfound", nil)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -390,25 +391,25 @@ func TestGetByCategoryErrorCoursesNotFound(t *testing.T) {
 }
 
 func TestUserEnrolledSuccess(t *testing.T) {
-	CreateUserTest()
-	tokenUser := GetTokenAfterLogin()
+	helper.CreateUserTest()
+	tokenUser := helper.GetTokenAfterLogin()
 
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	courseTest := CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	courseTest := helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
-	defer DeleteUserTest()
-	defer DeleteUserCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
+	defer helper.DeleteUserTest()
+	defer helper.DeleteUserCoursesTest()
 
 	req := httptest.NewRequest("POST", "/api/v1/courses/"+strconv.Itoa(courseTest.ID)+"/enrolled", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -424,7 +425,7 @@ func TestUserEnrolledErrorUnauthorized(t *testing.T) {
 	//req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -436,25 +437,25 @@ func TestUserEnrolledErrorUnauthorized(t *testing.T) {
 }
 
 func TestUserEnrolledErrorCourseNotFound(t *testing.T) {
-	CreateUserTest()
-	tokenUser := GetTokenAfterLogin()
+	helper.CreateUserTest()
+	tokenUser := helper.GetTokenAfterLogin()
 
-	CreateCategoryTest()
-	author := CreateAuthorTest()
-	courseTest := CreateCourseTest(author.ID)
+	helper.CreateCategoryTest()
+	author := helper.CreateAuthorTest()
+	courseTest := helper.CreateCourseTest(author.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
-	defer DeleteUserTest()
-	defer DeleteUserCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
+	defer helper.DeleteUserTest()
+	defer helper.DeleteUserCoursesTest()
 
 	req := httptest.NewRequest("POST", "/api/v1/courses/"+strconv.Itoa(courseTest.ID+1)+"/enrolled", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -466,27 +467,27 @@ func TestUserEnrolledErrorCourseNotFound(t *testing.T) {
 }
 
 func TestGetByUserIDSuccess(t *testing.T) {
-	userTest := CreateUserTest()
-	tokenUser := GetTokenAfterLogin()
+	userTest := helper.CreateUserTest()
+	tokenUser := helper.GetTokenAfterLogin()
 
-	CreateCategoryTest()
-	authorTest := CreateAuthorTest()
-	courseTest := CreateCourseTest(authorTest.ID)
+	helper.CreateCategoryTest()
+	authorTest := helper.CreateAuthorTest()
+	courseTest := helper.CreateCourseTest(authorTest.ID)
 
-	CreateUserCoursesTest(userTest.ID, courseTest.ID)
+	helper.CreateUserCoursesTest(userTest.ID, courseTest.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
-	defer DeleteUserTest()
-	defer DeleteUserCoursesTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
+	defer helper.DeleteUserTest()
+	defer helper.DeleteUserCoursesTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -499,26 +500,26 @@ func TestGetByUserIDSuccess(t *testing.T) {
 }
 
 func TestGetByUserIDErrorCoursesNotFound(t *testing.T) {
-	CreateUserTest()
-	tokenUser := GetTokenAfterLogin()
+	helper.CreateUserTest()
+	tokenUser := helper.GetTokenAfterLogin()
 
-	CreateCategoryTest()
-	authorTest := CreateAuthorTest()
-	CreateCourseTest(authorTest.ID)
+	helper.CreateCategoryTest()
+	authorTest := helper.CreateAuthorTest()
+	helper.CreateCourseTest(authorTest.ID)
 
 	//CreateUserCoursesTest(userTest.ID, courseTest.ID)
 
-	defer DeleteCategoryTest()
-	defer DeleteAuthorTest()
-	defer DeleteCourseTest()
-	defer DeleteCategoryCoursesTest()
-	defer DeleteUserTest()
+	defer helper.DeleteCategoryTest()
+	defer helper.DeleteAuthorTest()
+	defer helper.DeleteCourseTest()
+	defer helper.DeleteCategoryCoursesTest()
+	defer helper.DeleteUserTest()
 
 	req := httptest.NewRequest("GET", "/api/v1/enrolled/courses", nil)
 	req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 	response := w.Result()
 
 	body, _ := io.ReadAll(response.Body)
@@ -534,7 +535,7 @@ func TestGetByUserIDErrorUnauthorized(t *testing.T) {
 	//req.Header.Add("Authorization", "Bearer "+tokenUser)
 	w := httptest.NewRecorder()
 
-	Router.ServeHTTP(w, req)
+	helper.Router.ServeHTTP(w, req)
 
 	response := w.Result()
 	body, _ := io.ReadAll(response.Body)
