@@ -7,7 +7,7 @@ type LessonTitle struct {
 	CourseID       int
 	Title          string `gorm:"not null;default:untitled"`
 	InOrder        int
-	CreatedAt      time.Time `gorm:"default:current_timestamp"`
-	UpdatedAt      time.Time `gorm:"default:current_timestamp"`
+	CreatedAt      time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt      time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 	LessonContents []LessonContent
 }

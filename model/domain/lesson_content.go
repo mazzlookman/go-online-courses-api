@@ -8,6 +8,6 @@ type LessonContent struct {
 	Content       string `gorm:"not null;default:unknown"`
 	Duration      string
 	InOrder       int       `gorm:"type:int"`
-	CreatedAt     time.Time `gorm:"default:current_timestamp"`
-	UpdatedAt     time.Time `gorm:"default:current_timestamp"`
+	CreatedAt     time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt     time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 }

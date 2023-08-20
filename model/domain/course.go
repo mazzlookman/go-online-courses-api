@@ -11,8 +11,8 @@ type Course struct {
 	Perks       string `gorm:"type:text"`
 	Price       int    `gorm:"default:0;not null"`
 	Banner      string
-	CreatedAt   time.Time `gorm:"default:current_timestamp"`
-	UpdatedAt   time.Time `gorm:"default:current_timestamp"`
+	CreatedAt   time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt   time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 	Users       []User    `gorm:"many2many:user_courses;"`
 	Author      Author
 }

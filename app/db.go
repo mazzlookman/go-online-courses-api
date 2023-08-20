@@ -9,8 +9,8 @@ import (
 
 func DBConnection() *gorm.DB {
 	dbGorm, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:               "root:@tcp(127.0.0.1:3306)/go_pzn_restful_api?charset=utf8&parseTime=True&loc=Local", // data source name
-		DefaultStringSize: 255,                                                                                  // default size for string fields
+		DSN:               "root:root@tcp(mysql-db:3306)/go_pzn_restful_api?charset=utf8&parseTime=True&loc=Local", // data source name
+		DefaultStringSize: 255,                                                                                     // default size for string fields
 	}), &gorm.Config{})
 
 	if err != nil {

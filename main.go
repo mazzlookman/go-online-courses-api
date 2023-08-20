@@ -1,6 +1,8 @@
 package main
 
-import "go-pzn-restful-api/app"
+import (
+	"go-pzn-restful-api/app"
+)
 
 func main() {
 	router := app.NewRouter()

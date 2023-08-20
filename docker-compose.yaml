@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  mysql-db:
+    image: mysql
+    container_name: mysql-db
+#    ports:
+#      - "8080:8080"
+#      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: go_pzn_restful_api
+    restart: always
+
+  pzn-api:
+    depends_on:
+      - mysql-db
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: pzn-api:latest
+    container_name: pzn-api
+    ports:
+      - "3000:3000"
+    restart: always

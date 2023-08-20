@@ -3,9 +3,10 @@ package auth
 import (
 	"errors"
 	"github.com/golang-jwt/jwt/v4"
+	"os"
 )
 
-var secretKey = []byte("inirahasiabanget")
+var secretKey = []byte(os.Getenv("SECRET_KEY"))
 
 type JwtAuth interface {
 	GenerateJwtToken(role string, id int) (string, error)

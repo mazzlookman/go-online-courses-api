@@ -5,7 +5,7 @@ import "time"
 type Category struct {
 	ID        int `gorm:"primaryKey"`
 	Name      string
-	CreatedAt time.Time `gorm:"default:current_timestamp"`
-	UpdatedAt time.Time `gorm:"default:current_timestamp"`
+	CreatedAt time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 	Courses   []Course  `gorm:"many2many:category_courses"`
 }

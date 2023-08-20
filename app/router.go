@@ -45,7 +45,7 @@ var (
 )
 
 func NewRouter() *gin.Engine {
-	//DBMigrate(db)
+	DBMigrate(db)
 	router := gin.Default()
 	router.Use(gin.CustomRecovery(middleware.ErrorHandler))
 

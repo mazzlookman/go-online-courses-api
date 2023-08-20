@@ -9,7 +9,7 @@ type User struct {
 	Password  string
 	Avatar    string
 	Token     string
-	CreatedAt time.Time `gorm:"default:current_timestamp;"`
-	UpdatedAt time.Time `gorm:"default:current_timestamp;"`
+	CreatedAt time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 	Courses   []Course  `gorm:"many2many:user_courses;"`
 }
