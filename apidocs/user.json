@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "PZN Clone API Documentation",
-    "description": "This is an API Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "title": "API Documentation of PZN Website Clone",
+    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
     "version": "1.0.0"
   },
   "servers": [
@@ -14,9 +14,10 @@
     "/users": {
       "post": {
         "tags": ["User Endpoints"],
-        "summary": "Register user endpoint",
+        "summary": "Register User Endpoint",
         "description": "This is user endpoint for register a new user",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -44,21 +45,21 @@
         },
         "responses": {
           "200": {
-            "description": "Response body if user successfully register (avatar and token fields is empty)",
+            "description": "Success response (avatar and token fields is empty)",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/userResponseSuccess"
+                  "$ref": "#/components/schemas/UserResponseSuccess"
                   }
                 }
               }
             },
           "400": {
-            "description": "Response body if any or all of the body request fields are empty or invalid email format",
+            "description": "Error response if request body not as required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/badRequestError"
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -66,29 +67,29 @@
           }
         },
       "get": {
-        "tags": ["User Endpoints"],
-        "summary": "Get detail of user",
-        "description": "This is an endpoint for get detail of user profile",
         "security": [{
-          "authUser": []
+          "UserAuth": []
         }],
+        "tags": ["User Endpoints"],
+        "summary": "Get Detail of User Profile",
+        "description": "This is an endpoint for get detail of user profile",
         "responses": {
           "200": {
-            "description": "Response body for success get detail of user profile",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/userResponseSuccess"
+                  "$ref": "#/components/schemas/UserResponseSuccess"
                 }
               }
             }
           },
           "404": {
-            "description": "Response body user is not found",
+            "description": "Error response if user not found",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/notFoundError"
+                  "$ref": "#/components/schemas/NotFoundError"
                 }
               }
             }
@@ -102,6 +103,7 @@
         "summary": "Login User Endpoint",
         "description": "This is an endpoint for login user",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
@@ -123,21 +125,21 @@
         },
         "responses": {
           "200": {
-            "description": "Response body if user has logged in",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/userResponseSuccess"
+                  "$ref": "#/components/schemas/UserResponseSuccess"
                 }
               }
             }
           },
           "400": {
-            "description": "Response body if username or password is wrong",
+            "description": "Error response if request body not as required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/badRequestError"
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -148,10 +150,10 @@
     "/users/avatars": {
       "put": {
         "security": [{
-          "userAuth": []
+          "UserAuth": []
         }],
         "tags": ["User Endpoints"],
-        "summary": "Upload avatar's user endpoint",
+        "summary": "Upload Avatar's User Endpoint",
         "description": "This is an endpoint for upload avatar's user",
         "requestBody": {
           "required": true,
@@ -162,7 +164,8 @@
                 "properties": {
                   "avatar": {
                     "type": "string",
-                    "format": "binary"
+                    "format": "binary",
+                    "example": "bella.png"
                   }
                 }
               }
@@ -171,7 +174,7 @@
         },
         "responses": {
           "200": {
-            "description": "Response body if user successfully upload avatar",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
@@ -207,11 +210,11 @@
             }
           },
           "401": {
-            "description": "Response body if invalid token in header 'Authorization'",
+            "description": "Error response if invalid authorization token",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/unauthorizedError"
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -221,15 +224,15 @@
     },
     "/users/logout": {
       "post": {
-        "tags": ["User Endpoints"],
-        "summary": "User logout endpoint",
-        "description": "This is endpoint for author logout\n\nRequest body from header \"Authorization: Bearer jwt.token\"",
         "security": [{
-          "authUser": []
+          "UserAuth": []
         }],
+        "tags": ["User Endpoints"],
+        "summary": "User Logout Endpoint",
+        "description": "This is endpoint for user logout",
         "responses": {
           "200": {
-            "description": "response body if user is successfully logged out",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
@@ -262,11 +265,11 @@
             }
           },
           "401": {
-            "description": "Response body if invalid token in header 'Authorization'",
+            "description": "Error response if invalid authorization token",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/unauthorizedError"
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -277,7 +280,7 @@
     },
   "components": {
     "securitySchemes": {
-      "userAuth": {
+      "UserAuth": {
         "description": "Authentication for user endpoints",
         "type": "http",
         "scheme": "bearer",
@@ -285,7 +288,7 @@
       }
     },
     "schemas": {
-      "userResponseSuccess": {
+      "UserResponseSuccess": {
         "type": "object",
         "properties": {
           "code": {
@@ -325,7 +328,7 @@
           }
         }
       },
-      "badRequestError": {
+      "BadRequestError": {
         "type": "object",
         "properties": {
           "code": {
@@ -347,7 +350,7 @@
           }
         }
       },
-      "unauthorizedError": {
+      "UnauthorizedError": {
         "type": "object",
         "properties": {
           "code": {
@@ -369,8 +372,7 @@
           }
         }
       },
-
-      "notFoundError": {
+      "NotFoundError": {
         "type": "object",
         "properties": {
           "code": {

@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "PZN Clone API Documentation",
-    "description": "This is an API Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "title": "API Documentation of PZN Website Clone",
+    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
     "version": "1.0.0"
   },
   "servers": [
@@ -14,7 +14,7 @@
     "/authors": {
       "post": {
         "tags": ["Author Endpoints"],
-        "summary": "Author register endpoint",
+        "summary": "Author Register Endpoint",
         "description": "This is endpoint for author register",
         "requestBody": {
           "required": true,
@@ -41,7 +41,8 @@
                   },
                   "avatar": {
                     "type": "string",
-                    "format": "binary"
+                    "format": "binary",
+                    "example": "bella.png"
                   }
                 }
               }
@@ -50,21 +51,21 @@
         },
         "responses": {
           "200": {
-            "description": "Response \"OK\" if author successfully registered (token if empty)",
+            "description": "Success response (token is empty)",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/authorResponseSuccess"
+                  "$ref": "#/components/schemas/AuthorResponseSuccess"
                 }
               }
             }
           },
           "400": {
-            "description": "Response \"Bad Request\" if request body not as required",
+            "description": "Error response if request body not as required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/badRequestError"
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -75,7 +76,7 @@
     "/authors/login": {
       "post": {
         "tags": ["Author Endpoints"],
-        "summary": "Author login endpoint",
+        "summary": "Author Login Endpoint",
         "description": "This is endpoint for author login",
         "requestBody": {
           "required": true,
@@ -99,21 +100,21 @@
         },
         "responses": {
           "200": {
-            "description": "Response \"OK\" if author can login",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/authorResponseSuccess"
+                  "$ref": "#/components/schemas/AuthorResponseSuccess"
                 }
               }
             }
           },
           "400": {
-            "description": "Response \"Bad Request\" if request body not as required",
+            "description": "Error response if request body not as required",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/badRequestError"
+                  "$ref": "#/components/schemas/BadRequestError"
                 }
               }
             }
@@ -123,15 +124,15 @@
     },
     "/authors/logout": {
       "post": {
-        "tags": ["Author Endpoints"],
-        "summary": "Author logout endpoint",
-        "description": "This is endpoint for author logout\n\nRequest body from header \"Authorization: Bearer jwt.token\"",
         "security": [{
-          "authorAuth": []
+          "AuthorAuth": []
         }],
+        "tags": ["Author Endpoints"],
+        "summary": "Author Logout Endpoint",
+        "description": "This is endpoint for logout author",
         "responses": {
           "200": {
-            "description": "Response \"OK\" if author can logout",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
@@ -164,11 +165,11 @@
             }
           },
           "401": {
-            "description": "Response \"Unauthorized\" if invalid token in header \"Authorization\"",
+            "description": "Error response if invalid authorization token",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/unauthorizedError"
+                  "$ref": "#/components/schemas/UnauthorizedError"
                 }
               }
             }
@@ -179,7 +180,7 @@
   },
   "components": {
     "securitySchemes": {
-      "authorAuth": {
+      "AuthorAuth": {
         "description": "Authentication for author endpoints",
         "type": "http",
         "scheme": "bearer",
@@ -187,7 +188,7 @@
       }
     },
     "schemas": {
-      "authorResponseSuccess": {
+      "AuthorResponseSuccess": {
         "type": "object",
         "properties": {
           "code": {
@@ -230,7 +231,7 @@
           }
         }
       },
-      "badRequestError": {
+      "BadRequestError": {
         "type": "object",
         "properties": {
           "code": {
@@ -252,7 +253,7 @@
           }
         }
       },
-      "unauthorizedError": {
+      "UnauthorizedError": {
         "type": "object",
         "properties": {
           "code": {
