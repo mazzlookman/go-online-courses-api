@@ -54,9 +54,9 @@ func NewRouter() *gin.Engine {
 	// User endpoints
 	v1.POST("/users", userController.Register)
 	v1.POST("/users/login", userController.Login)
-	v1.POST("/users/logout", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.Logout)
-	v1.GET("/users", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
 	v1.PUT("/users/avatars", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
+	v1.GET("/users", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
+	v1.POST("/users/logout", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.Logout)
 
 	// Author endpoints
 	v1.POST("/authors", authorController.Register)

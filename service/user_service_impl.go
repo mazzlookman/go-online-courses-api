@@ -60,12 +60,12 @@ func (s *UserServiceImpl) FindByID(userID int) web.UserResponse {
 func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 	findByEmail, err := s.UserRepository.FindByEmail(input.Email)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
+		panic(helper.NewBadRequestError(errors.New("Email or password is wrong").Error()))
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(findByEmail.Password), []byte(input.Password))
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
+		panic(helper.NewBadRequestError(errors.New("Email or password is wrong").Error()))
 	}
 
 	token, _ := s.JwtAuth.GenerateJwtToken("user", findByEmail.ID)

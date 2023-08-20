@@ -8,6 +8,10 @@ import (
 )
 
 func ErrorHandler(ctx *gin.Context, err any) {
+	if badRequestError(ctx, err) {
+		return
+	}
+
 	if validationErrors(ctx, err) {
 		return
 	}
@@ -23,13 +27,27 @@ func ErrorHandler(ctx *gin.Context, err any) {
 	internalServerError(ctx, err)
 }
 
+func badRequestError(ctx *gin.Context, err any) bool {
+	unauthorized, ok := err.(helper.BadRequestError)
+	if ok {
+		ctx.Writer.WriteHeader(http.StatusBadRequest)
+		ctx.AbortWithStatusJSON(
+			http.StatusBadRequest,
+			helper.APIResponse(http.StatusBadRequest, "Bad Request", helper.NewResponseErrorKey(unauthorized.Error)),
+		)
+		return true
+	} else {
+		return false
+	}
+}
+
 func unauthorizedError(ctx *gin.Context, err any) bool {
 	unauthorized, ok := err.(helper.UnauthorizedError)
 	if ok {
 		ctx.Writer.WriteHeader(http.StatusUnauthorized)
 		ctx.AbortWithStatusJSON(
 			http.StatusUnauthorized,
-			helper.APIResponse(http.StatusUnauthorized, "Unauthorized", unauthorized.Error),
+			helper.APIResponse(http.StatusUnauthorized, "Unauthorized", helper.NewResponseErrorKey(unauthorized.Error)),
 		)
 		return true
 	} else {
@@ -43,7 +61,7 @@ func notFoundError(ctx *gin.Context, err any) bool {
 		ctx.Writer.WriteHeader(http.StatusNotFound)
 		ctx.AbortWithStatusJSON(
 			http.StatusNotFound,
-			helper.APIResponse(http.StatusNotFound, "Not Found", notFound.Error),
+			helper.APIResponse(http.StatusNotFound, "Not Found", helper.NewResponseErrorKey(notFound.Error)),
 		)
 		return true
 	} else {
@@ -57,7 +75,7 @@ func validationErrors(ctx *gin.Context, err any) bool {
 		ctx.Writer.WriteHeader(http.StatusBadRequest)
 		ctx.AbortWithStatusJSON(
 			http.StatusBadRequest,
-			helper.APIResponse(http.StatusBadRequest, "Bad Request", errors.Error()),
+			helper.APIResponse(http.StatusBadRequest, "Bad Request", helper.NewResponseErrorKey(errors.Error())),
 		)
 		return true
 	} else {
@@ -69,6 +87,6 @@ func internalServerError(ctx *gin.Context, err any) {
 	ctx.Writer.WriteHeader(http.StatusInternalServerError)
 	ctx.AbortWithStatusJSON(
 		http.StatusInternalServerError,
-		helper.APIResponse(http.StatusInternalServerError, "Internal Server Error", err),
+		helper.APIResponse(http.StatusInternalServerError, "Internal Server Error", helper.NewResponseErrorKey(err.(string))),
 	)
 }
