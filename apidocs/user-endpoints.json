@@ -223,7 +223,7 @@
       "post": {
         "tags": ["User Endpoints"],
         "summary": "User logout endpoint",
-        "description": "This is an endpoint for logged out user",
+        "description": "This is endpoint for author logout\n\nRequest body from header \"Authorization: Bearer jwt.token\"",
         "security": [{
           "authUser": []
         }],

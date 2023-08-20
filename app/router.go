@@ -63,18 +63,18 @@ func NewRouter() *gin.Engine {
 	v1.POST("/authors/login", authorController.Login)
 	v1.POST("/authors/logout", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.Logout)
 
-	// Course endpoints
-	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
-	v1.PUT("/courses/:courseID/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
-	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorID)
-	v1.GET("/courses/:slug", courseController.GetBySlug)
+	// Category endpoints
+	v1.POST("/categories", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), categoryController.Create)
 	v1.GET("/courses", courseController.GetAll)
 	v1.GET("/courses/categories/:categoryName", courseController.GetByCategory)
 	v1.GET("/enrolled/courses", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
 	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
-	// Category endpoints
-	v1.POST("/categories", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), categoryController.Create)
+	// Course endpoints
+	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
+	v1.PUT("/courses/:courseID/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
+	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorID)
+	v1.GET("/courses/:slug", courseController.GetBySlug)
 
 	// Lesson title endpoints
 	v1.POST("/authors/courses/:courseID/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)

@@ -1,0 +1,279 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PZN Clone API Documentation",
+    "description": "This is an API Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:2802/api/v1"
+    }
+  ],
+  "paths": {
+    "/authors": {
+      "post": {
+        "tags": ["Author Endpoints"],
+        "summary": "Author register endpoint",
+        "description": "This is endpoint for author register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Bella Rizky Kharisma"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "bella@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "bella123"
+                  },
+                  "profile": {
+                    "type": "string",
+                    "example": "This is profile"
+                  },
+                  "avatar": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response \"OK\" if author successfully registered (token if empty)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorResponseSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response \"Bad Request\" if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/login": {
+      "post": {
+        "tags": ["Author Endpoints"],
+        "summary": "Author login endpoint",
+        "description": "This is endpoint for author login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "bella@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "bella123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Response \"OK\" if author can login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authorResponseSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Response \"Bad Request\" if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/badRequestError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/logout": {
+      "post": {
+        "tags": ["Author Endpoints"],
+        "summary": "Author logout endpoint",
+        "description": "This is endpoint for author logout\n\nRequest body from header \"Authorization: Bearer jwt.token\"",
+        "security": [{
+          "authorAuth": []
+        }],
+        "responses": {
+          "200": {
+            "description": "Response \"OK\" if author can logout",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "You're successfully logged out"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "author": {
+                          "type": "string",
+                          "example": "Bella Rizky Kharisma"
+                        },
+                        "token": {
+                          "type": "string",
+                          "required": null,
+                          "example": ""
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Response \"Unauthorized\" if invalid token in header \"Authorization\"",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/unauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "authorAuth": {
+        "description": "Authentication for author endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "authorResponseSuccess": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "number",
+                "example": 1
+              },
+              "name": {
+                "type": "string",
+                "example": "Bella Rizky Kharisma"
+              },
+              "email": {
+                "type": "string",
+                "example": "bella@example.com"
+              },
+              "profile": {
+                "type": "string",
+                "example": "This is profile"
+              },
+              "avatar": {
+                "type": "string",
+                "example": "assets/images/avatars/bella.png"
+              },
+              "token": {
+                "type": "string",
+                "required": null,
+                "example": "this.jwt.token"
+              }
+            }
+          }
+        }
+      },
+      "badRequestError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "bad request error message"
+              }
+            }
+          }
+        }
+      },
+      "unauthorizedError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 401
+          },
+          "status": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "unauthorized error message"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -28,7 +28,7 @@ func (c *AuthorControllerImpl) Logout(ctx *gin.Context) {
 
 	if logout.Token == "" {
 		ctx.JSON(200,
-			helper.APIResponse(200, "You're logged out",
+			helper.APIResponse(200, "You're successfully logged out",
 				gin.H{"author": logout.Name, "token": logout.Token}),
 		)
 	}
