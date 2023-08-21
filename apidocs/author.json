@@ -224,7 +224,6 @@
               },
               "token": {
                 "type": "string",
-                "required": null,
                 "example": "this.jwt.token"
               }
             }

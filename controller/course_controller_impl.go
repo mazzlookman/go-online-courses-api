@@ -54,7 +54,7 @@ func (c *CourseControllerImpl) UserEnrolled(ctx *gin.Context) {
 
 	ctx.JSON(200,
 		helper.APIResponse(200, "Success to enrolled",
-			gin.H{"enrolled by": user.Name}),
+			gin.H{"enrolled_by": user.Name}),
 	)
 }
 

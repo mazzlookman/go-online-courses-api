@@ -1,0 +1,699 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Documentation of PZN Website Clone",
+    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:2802/api/v1"
+    }
+  ],
+  "paths": {
+    "/courses": {
+      "post": {
+        "security": [{
+          "AuthorAuth": []
+        }],
+        "tags": ["Course Endpoints"],
+        "summary": "Create Course Endpoint",
+        "description": "This is endpoint to create a new course\n\n Important note: Must to create category first!",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["author_id","title","slug","description","perks","price","category"],
+                "properties": {
+                  "author_id": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "title": {
+                    "type": "string",
+                    "example": "Golang course"
+                  },
+                  "slug": {
+                    "type": "string",
+                    "example": "golang-course"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Course description"
+                  },
+                  "perks": {
+                    "type": "string",
+                    "example": "perks1, perks2, perks3"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 99000
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "Backend"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response (banner is empty and users_enrolled= 0)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Course Endpoints"],
+        "summary": "Get All Available Courses",
+        "description": "This is endpoint get all the courses are available",
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCourses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{courseID}/banners": {
+      "put": {
+        "security": [{
+          "AuthorAuth": []
+        }],
+        "tags": ["Course Endpoints"],
+        "summary": "Upload Banner's Course Endpoint",
+        "description": "This is endpoint to upload banner from a course",
+        "parameters": [{
+          "name": "courseID",
+          "in": "path",
+          "description": "Course ID"
+        }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "banner": {
+                    "type": "string",
+                    "format": "binary",
+                    "example": "golang.jpg"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Banner is successfully uploaded"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "is_uploaded": {
+                          "type": "boolean",
+                          "example": true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if course not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/author/{authorID}": {
+      "get": {
+        "summary": "Get Course By Author ID",
+        "tags": ["Course Endpoints"],
+        "description": "This is endpoint to get course detail by author id",
+        "parameters": [{
+          "name": "authorID",
+          "in": "path",
+          "description": "Author ID"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCourses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{slug}": {
+      "get": {
+        "tags": ["Course Endpoints"],
+        "summary": "Get Course Detail By Slug",
+        "description": "This is endpoint to get course detail by slug",
+        "parameters": [{
+          "name": "slug",
+          "in": "path",
+          "description": "Slug"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCourses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/categories/{categoryName}": {
+      "get": {
+        "tags": ["Course Endpoints"],
+        "summary": "Get Course Detail By Category",
+        "description": "This is endpoint to get course detail by category",
+        "parameters": [{
+          "name": "categoryName",
+          "in": "path",
+          "description": "Category Name"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCourses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/enrolled": {
+      "get": {
+        "security": [{
+            "UserAuth": []
+          }],
+        "tags": ["Course Endpoints"],
+        "summary": "Get All Courses that User has Enrolled",
+        "description": "This is endpoint get all the courses that the user has enrolled for",
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOfCourses"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/:courseID/enrolled": {
+      "post": {
+        "security": [{
+          "UserAuth": []
+        }],
+        "tags": ["Course Endpoints"],
+        "summary": "User Enroll a Course Endpoint",
+        "description": "This is endpoint for user to enroll a course",
+        "parameters": [{
+          "name": "courseID",
+          "in": "path",
+          "description": "Course ID"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "example": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Success to enrolled"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "enrolled_by": {
+                          "type": "string",
+                          "example": "Bella Rizky Kharisma"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if courses not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "UserAuth": {
+        "description": "Authentication user for course endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "AuthorAuth": {
+        "description": "Authentication author for course endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "CourseResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "author_id": {
+                "type": "integer",
+                "example": 1
+              },
+              "title": {
+                "type": "string",
+                "example": "Golang course"
+              },
+              "slug": {
+                "type": "string",
+                "example": "golang-course"
+              },
+              "description": {
+                "type": "string",
+                "example": "Course description"
+              },
+              "perks": {
+                "type": "string",
+                "example": "perks1, perks2, perks3"
+              },
+              "price": {
+                "type": "integer",
+                "example": 99000
+              },
+              "banner": {
+                "type": "string",
+                "example": "assets/images/banners/golang.jpg"
+              },
+              "users_enrolled": {
+                "type": "integer",
+                "example": 100
+              }
+            }
+          }
+        }
+      },
+      "CourseBySlugResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "author_id": {
+                "type": "integer",
+                "example": 1
+              },
+              "title": {
+                "type": "string",
+                "example": "Golang course"
+              },
+              "slug": {
+                "type": "string",
+                "example": "golang-course"
+              },
+              "description": {
+                "type": "string",
+                "example": "Course description"
+              },
+              "perks": {
+                "type": "string",
+                "example": "perks1, perks2, perks3"
+              },
+              "price": {
+                "type": "integer",
+                "example": 99000
+              },
+              "banner": {
+                "type": "string",
+                "example": "assets/images/banners/golang.jpg"
+              },
+              "users_enrolled": {
+                "type": "integer",
+                "example": 100
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "number",
+                    "example": 200
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "OK"
+                  },
+                  "data": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Bella Rizky Kharisma"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "bella@example.com"
+                      },
+                      "profile": {
+                        "type": "string",
+                        "example": "This is profile"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "assets/images/avatars/bella.png"
+                      },
+                      "token": {
+                        "type": "string",
+                        "example": "this.jwt.token"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ListOfCourses": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "List all courses"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "author_id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Golang course"
+                },
+                "slug": {
+                  "type": "string",
+                  "example": "golang-course"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Course description"
+                },
+                "perks": {
+                  "type": "string",
+                  "example": "perks1, perks2, perks3"
+                },
+                "price": {
+                  "type": "integer",
+                  "example": 99000
+                },
+                "banner": {
+                  "type": "string",
+                  "example": "assets/images/banners/golang.jpg"
+                },
+                "users_enrolled": {
+                  "type": "integer",
+                  "example": 100
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "bad request error message"
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 401
+          },
+          "status": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "unauthorized error message"
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "not found error message"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

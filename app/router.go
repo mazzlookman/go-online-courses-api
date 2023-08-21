@@ -73,20 +73,20 @@ func NewRouter() *gin.Engine {
 	v1.GET("/courses/:slug", courseController.GetBySlug)
 	v1.GET("/courses", courseController.GetAll)
 	v1.GET("/courses/categories/:categoryName", courseController.GetByCategory)
-	v1.GET("/enrolled/courses", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
+	v1.GET("/courses/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
 	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	// Lesson title endpoints
 	v1.POST("/authors/courses/:courseID/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)
 	v1.PATCH("/authors/courses/:courseID/lesson-titles/:ltID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Update)
 	//add payment middleware (later)
-	v1.GET("/enrolled/courses/:courseID/lesson-titles", lessonTitleController.GetByCourseID)
+	v1.GET("/courses/enrolled/:courseID/lesson-titles", lessonTitleController.GetByCourseID)
 
 	// Lesson content endpoints
 	v1.POST("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
 	v1.PATCH("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents/:lcID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
 	//add payment middleware (later)
-	v1.GET("/enrolled/courses/lesson-titles/:ltID/lesson-contents", lessonContentController.GetByLessonTitleID)
+	v1.GET("/courses/enrolled/lesson-titles/:ltID/lesson-contents", lessonContentController.GetByLessonTitleID)
 
 	return router
 }
