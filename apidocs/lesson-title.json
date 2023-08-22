@@ -1,0 +1,295 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Documentation of PZN Website Clone",
+    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:2802/api/v1"
+    }
+  ],
+  "paths": {
+    "/authors/courses/:courseID/lesson-titles": {
+      "post": {
+        "security": [{
+          "AuthorAuth": []
+        }],
+        "tags": ["Lesson Title Endpoints"],
+        "summary": "Create a New Lesson Title",
+        "description": "This endpoint is used to create a new lesson title",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title","in_order"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Golang Basic"
+                  },
+                  "in_order": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonTitleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/courses/{courseID}/lesson-titles/{ltID}": {
+      "patch": {
+        "security": [{
+          "AuthorAuth": []
+        }],
+        "tags": ["Lesson Title Endpoints"],
+        "summary": "Update Lesson Title",
+        "description": "This endpoint is used to update a lesson title",
+        "parameters": [{
+          "name": "courseID",
+          "in": "path",
+          "description": "Course ID"
+        },{
+          "name": "ltID",
+          "in": "path",
+          "description": "Lesson title ID"
+        }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "You can use any or all of request body field bellow",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Golang Basic Updated"
+                  },
+                  "in_order": {
+                    "type": "integer",
+                    "example": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonTitleResponseUpdated"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if course or lesson title not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AuthorAuth": {
+        "description": "Authentication author for course endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "LessonTitleResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "course_id": {
+                "type": "integer",
+                "example": 1
+              },
+              "title": {
+                "type": "string",
+                "example": "Golang Basic"
+              },
+              "in_order": {
+                "type": "integer",
+                "example": 1
+              }
+            }
+          }
+        }
+      },
+      "LessonTitleResponseUpdated": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "course_id": {
+                "type": "integer",
+                "example": 1
+              },
+              "title": {
+                "type": "string",
+                "example": "Golang Basic Updated"
+              },
+              "in_order": {
+                "type": "integer",
+                "example": 1
+              }
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "bad request error message"
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 401
+          },
+          "status": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "unauthorized error message"
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "not found error message"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
