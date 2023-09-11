@@ -5,6 +5,12 @@ import (
 )
 
 func main() {
+	app.EnvInit()
+	listener := app.NgrokInit()
+
 	router := app.NewRouter()
-	router.Run(":3000")
+	router.RunListener(listener)
+	router.SetTrustedProxies([]string{listener.URL()})
+
+	router.Run()
 }

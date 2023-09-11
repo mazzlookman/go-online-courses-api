@@ -1,0 +1,15 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Documentation of PZN Website Clone",
+    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:2802/api/v1"
+    }
+  ],
+  "paths": {
+  }
+}
