@@ -8,11 +8,31 @@ import (
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/repository"
 	"golang.org/x/crypto/bcrypt"
+	"os"
 )
 
 type AuthorServiceImpl struct {
 	repository.AuthorRepository
 	auth.JwtAuth
+}
+
+func (s *AuthorServiceImpl) UploadAvatar(authorID int, filePath string) web.AuthorResponse {
+	findByID, err := s.AuthorRepository.FindByID(authorID)
+	oldAvatar := findByID.Avatar
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
+
+	if oldAvatar != filePath {
+		if findByID.Avatar == "" {
+			return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
+		}
+		err := os.Remove(oldAvatar)
+		helper.PanicIfError(err)
+		return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
+	}
+
+	return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
 }
 
 func (s *AuthorServiceImpl) Logout(authorID int) web.AuthorResponse {
@@ -39,7 +59,6 @@ func (s *AuthorServiceImpl) Register(input web.AuthorRegisterInput) web.AuthorRe
 	password, _ := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	author.Password = string(password)
 	author.Profile = input.Profile
-	author.Avatar = input.Avatar
 
 	save := s.AuthorRepository.Save(author)
 
@@ -79,4 +98,11 @@ func NewAuthorService(authorRepository repository.AuthorRepository, jwtAuth auth
 		AuthorRepository: authorRepository,
 		JwtAuth:          jwtAuth,
 	}
+}
+
+func authorUploadAvatar(author domain.Author, filePath string, authorRepository repository.AuthorRepository) web.AuthorResponse {
+	author.Avatar = filePath
+	update := authorRepository.Update(author)
+	response := helper.ToAuthorResponse(update)
+	return response
 }

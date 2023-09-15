@@ -5,12 +5,6 @@ import (
 )
 
 func main() {
-	app.EnvInit()
-	listener := app.NgrokInit()
-
 	router := app.NewRouter()
-	router.RunListener(listener)
-	router.SetTrustedProxies([]string{listener.URL()})
-
-	router.Run()
+	router.Run(":2802")
 }

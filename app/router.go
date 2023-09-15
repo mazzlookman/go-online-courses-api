@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go-pzn-restful-api/auth"
 	"go-pzn-restful-api/controller"
@@ -45,8 +46,11 @@ var (
 )
 
 func NewRouter() *gin.Engine {
+	EnvInit()
 	DBMigrate(db)
+
 	router := gin.Default()
+	router.Use(cors.Default())
 	router.Use(gin.CustomRecovery(middleware.ErrorHandler))
 
 	v1 := router.Group("/api/v1")
@@ -60,7 +64,9 @@ func NewRouter() *gin.Engine {
 
 	// Author endpoints
 	v1.POST("/authors", authorController.Register)
+	v1.GET("/authors", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.GetByID)
 	v1.POST("/authors/login", authorController.Login)
+	v1.PUT("/authors/avatars", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.UploadAvatar)
 	v1.POST("/authors/logout", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.Logout)
 
 	// Category endpoints

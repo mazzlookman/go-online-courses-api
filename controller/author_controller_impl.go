@@ -6,16 +6,33 @@ import (
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/service"
-	"strconv"
 )
 
 type AuthorControllerImpl struct {
 	service.AuthorService
 }
 
+func (c *AuthorControllerImpl) UploadAvatar(ctx *gin.Context) {
+	fileHeader, err := ctx.FormFile("avatar")
+	helper.PanicIfError(err)
+	author := ctx.MustGet("current_author").(web.AuthorResponse)
+	filePath := fmt.Sprintf("assets/images/avatars/%s-%s", author.Email, fileHeader.Filename)
+
+	uploadAvatar := c.AuthorService.UploadAvatar(author.ID, filePath)
+
+	err = ctx.SaveUploadedFile(fileHeader, filePath)
+	helper.PanicIfError(err)
+
+	ctx.JSON(
+		200,
+		helper.APIResponse(200, "Your avatar has been uploaded",
+			gin.H{"author": uploadAvatar.Name, "avatar": uploadAvatar.Avatar, "is_uploaded": true}),
+	)
+}
+
 func (c *AuthorControllerImpl) GetByID(ctx *gin.Context) {
-	param := ctx.Param("authorID")
-	authorID, _ := strconv.Atoi(param)
+	// terakhir sampe sini
+	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
 	authorResponse := c.AuthorService.FindByID(authorID)
 	ctx.JSON(200,
 		helper.APIResponse(200, "Detail of author", authorResponse),
@@ -36,20 +53,13 @@ func (c *AuthorControllerImpl) Logout(ctx *gin.Context) {
 
 func (c *AuthorControllerImpl) Register(ctx *gin.Context) {
 	author := web.AuthorRegisterInput{}
-	err := ctx.ShouldBind(&author)
-
-	fileHeader, err := ctx.FormFile("avatar")
+	err := ctx.ShouldBindJSON(&author)
 	helper.PanicIfError(err)
-	filePath := fmt.Sprintf("assets/images/avatars/%s-%s", author.Email, fileHeader.Filename)
 
-	author.Avatar = filePath
 	authorResponse := c.AuthorService.Register(author)
 
-	err = ctx.SaveUploadedFile(fileHeader, filePath)
-	helper.PanicIfError(err)
-
 	ctx.JSON(200,
-		helper.APIResponse(200, "Author has created", authorResponse),
+		helper.APIResponse(200, "Author has been registered", authorResponse),
 	)
 }
 
@@ -59,6 +69,7 @@ func (c *AuthorControllerImpl) Login(ctx *gin.Context) {
 	helper.PanicIfError(err)
 
 	authorResponse := c.AuthorService.Login(input)
+
 	ctx.JSON(200,
 		helper.APIResponse(200, "Author has been logged in", authorResponse),
 	)

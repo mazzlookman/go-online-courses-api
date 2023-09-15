@@ -1,11 +1,10 @@
 package web
 
 type AuthorRegisterInput struct {
-	Name     string `form:"name" binding:"required"`
-	Email    string `form:"email" binding:"required,email"`
-	Password string `form:"password" binding:"required"`
-	Profile  string `form:"profile" binding:"required"`
-	Avatar   string
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+	Profile  string `json:"profile" binding:"required"`
 }
 
 type AuthorLoginInput struct {

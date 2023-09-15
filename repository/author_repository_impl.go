@@ -31,7 +31,7 @@ func (r *AuthorRepositoryImpl) FindByEmail(email string) (domain.Author, error) 
 func (r *AuthorRepositoryImpl) FindByID(authorID int) (domain.Author, error) {
 	author := domain.Author{}
 	err := r.db.Where("id=?", authorID).Find(&author).Error
-	if err != nil {
+	if err != nil || author.ID == 0 {
 		return author, errors.New("Author is not found")
 	}
 

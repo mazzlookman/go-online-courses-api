@@ -1,4 +1,4 @@
-FROM golang:1.19-alpine as stage_1
+FROM golang:1.21-alpine as stage_1
 WORKDIR /app
 
 COPY go.mod ./
@@ -17,7 +17,7 @@ WORKDIR /app
 COPY --from=stage_1 /app/pzn-api ./
 COPY --from=stage_1 /app/.env ./
 
-EXPOSE 3000
+EXPOSE 2802
 
 CMD ["./pzn-api"]
 

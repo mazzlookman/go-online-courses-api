@@ -35,17 +35,16 @@ func (s *UserServiceImpl) UploadAvatar(userID int, filePath string) web.UserResp
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	userResponse := web.UserResponse{}
 	if oldAvatar != filePath {
 		if findByID.Avatar == "" {
-			return updateWhenUploadAvatar(findByID, userResponse, filePath, s.UserRepository)
+			return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
 		}
 		err := os.Remove(oldAvatar)
 		helper.PanicIfError(err)
-		return updateWhenUploadAvatar(findByID, userResponse, filePath, s.UserRepository)
+		return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
 	}
 
-	return updateWhenUploadAvatar(findByID, userResponse, filePath, s.UserRepository)
+	return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
 }
 
 func (s *UserServiceImpl) FindByID(userID int) web.UserResponse {
@@ -103,9 +102,9 @@ func NewUserService(userRepository repository.UserRepository, jwtAuth auth.JwtAu
 	}
 }
 
-func updateWhenUploadAvatar(user domain.User, response web.UserResponse, filePath string, userRepository repository.UserRepository) web.UserResponse {
+func updateWhenUploadAvatar(user domain.User, filePath string, userRepository repository.UserRepository) web.UserResponse {
 	user.Avatar = filePath
 	update := userRepository.Update(user)
-	response = helper.ToUserResponse(update)
+	response := helper.ToUserResponse(update)
 	return response
 }
