@@ -15,6 +15,10 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    environment:
+      DB_DEV : docker
+    ports:
+      - "2802:2802"
     image: pzn-api:latest
     container_name: pzn-api
     restart: always

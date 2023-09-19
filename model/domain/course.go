@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type Course struct {
-	ID          int `gorm:"primaryKey"`
-	AuthorID    int
+	Id          int `gorm:"primaryKey"`
+	AuthorId    int
 	Title       string
 	Slug        string
 	Description string `gorm:"type:text"`
@@ -15,4 +15,5 @@ type Course struct {
 	UpdatedAt   time.Time `gorm:"type:TIMESTAMP;not null;default:CURRENT_TIMESTAMP"`
 	Users       []User    `gorm:"many2many:user_courses;"`
 	Author      Author
+	Transaction []Transaction
 }

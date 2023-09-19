@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-pzn-restful-api/auth"
 	"go-pzn-restful-api/controller"
+	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/middleware"
 	"go-pzn-restful-api/repository"
 	"go-pzn-restful-api/service"
@@ -43,10 +44,14 @@ var (
 	lessonContentRepository = repository.NewLessonContentRepository(db)
 	lessonContentService    = service.NewLessonContentService(lessonContentRepository, courseService)
 	lessonContentController = controller.NewLessonContentController(lessonContentService)
+
+	transactionController = controller.NewTransactionController(
+		service.NewTransactionService(repository.NewTransactionRepository(db), courseService),
+	)
 )
 
 func NewRouter() *gin.Engine {
-	EnvInit()
+	helper.EnvInit()
 	DBMigrate(db)
 
 	router := gin.Default()
@@ -59,12 +64,12 @@ func NewRouter() *gin.Engine {
 	v1.POST("/users", userController.Register)
 	v1.POST("/users/login", userController.Login)
 	v1.PUT("/users/avatars", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.UploadAvatar)
-	v1.GET("/users", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.GetByID)
+	v1.GET("/users", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.GetById)
 	v1.POST("/users/logout", middleware.UserJwtAuthMiddleware(jwtAuth, userService), userController.Logout)
 
 	// Author endpoints
 	v1.POST("/authors", authorController.Register)
-	v1.GET("/authors", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.GetByID)
+	v1.GET("/authors", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.GetById)
 	v1.POST("/authors/login", authorController.Login)
 	v1.PUT("/authors/avatars", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.UploadAvatar)
 	v1.POST("/authors/logout", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), authorController.Logout)
@@ -74,25 +79,32 @@ func NewRouter() *gin.Engine {
 
 	// Course endpoints
 	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
-	v1.PUT("/courses/:courseID/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
-	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorID)
+	v1.PUT("/courses/:courseId/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
+	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorId)
 	v1.GET("/courses/:slug", courseController.GetBySlug)
 	v1.GET("/courses", courseController.GetAll)
 	v1.GET("/courses/categories/:categoryName", courseController.GetByCategory)
-	v1.GET("/courses/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserID)
-	v1.POST("/courses/:courseID/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
+	v1.GET("/courses/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserId)
+	v1.POST("/courses/:courseId/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	// Lesson title endpoints
-	v1.POST("/authors/courses/:courseID/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)
-	v1.PATCH("/authors/courses/:courseID/lesson-titles/:ltID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Update)
-	//add payment middleware (later)
-	v1.GET("/courses/enrolled/:courseID/lesson-titles", lessonTitleController.GetByCourseID)
+	v1.POST("/authors/courses/:courseId/lesson-titles", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Create)
+	v1.PATCH("/authors/courses/:courseId/lesson-titles/:ltId", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonTitleController.Update)
+	v1.GET("/courses/enrolled/:courseId/lesson-titles", lessonTitleController.GetByCourseId)
 
 	// Lesson content endpoints
-	v1.POST("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
-	v1.PATCH("authors/courses/:courseID/lesson-titles/:ltID/lesson-contents/:lcID", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
-	//add payment middleware (later)
-	v1.GET("/courses/enrolled/lesson-titles/:ltID/lesson-contents", lessonContentController.GetByLessonTitleID)
+	v1.POST("authors/courses/:courseId/lesson-titles/:ltId/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
+	v1.PATCH("authors/courses/:courseId/lesson-contents/:lcId", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
+	v1.GET("/c/:courseId/lesson-titles/:ltId/lesson-contents", lessonContentController.GetByLessonTitleId)
+	v1.GET("/c/:courseId/lesson-titles/lesson-contents/:lcId",
+		middleware.UserJwtAuthMiddleware(jwtAuth, userService),
+		middleware.MidtransPaymentMiddleware(courseService),
+		lessonContentController.GetById,
+	)
+
+	// transaction endpoints
+	v1.POST("/courses/:courseId/transactions", middleware.UserJwtAuthMiddleware(jwtAuth, userService), transactionController.EarnPaidCourse)
+	v1.POST("/transactions/notifications", transactionController.MidtransNotification)
 
 	return router
 }

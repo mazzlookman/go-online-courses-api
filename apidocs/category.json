@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "API Documentation of PZN Website Clone",
-    "description": "This is APIs Documentation of cloning website https://kelas.programmerzamannow.com/",
+    "title": "API Documentation of Online Course Website",
+    "description": "This is API documentation of the online course website created using Go-Lang. There are 7 groups of endpoints in this api documentation, including: (1) user endpoints, (2) author endpoints, (3) category endpoints, (4) course endpoints, (5) lesson-title endpoints, (6) lesson-content endpoints, and (7) transaction endpoints.",
     "version": "1.0.0"
   },
   "servers": [
@@ -18,13 +18,13 @@
         }],
         "tags": ["Category Endpoints"],
         "summary": "Category create endpoint",
-        "description": "This is endpoint for create a new course's category",
+        "description": "This endpoint is used for create a new course's category",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["name"],
                 "properties": {
                   "name": {
                     "type": "string",

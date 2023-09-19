@@ -1,7 +1,6 @@
 package service
 
 import (
-	"go-pzn-restful-api/formatter"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
@@ -13,43 +12,43 @@ type LessonTitleServiceImpl struct {
 	CourseService
 }
 
-func (s *LessonTitleServiceImpl) Update(ltID int, input web.LessonTitleCreateInput) web.LessonTitleResponse {
-	findByID, err := s.LessonTitleRepository.FindByID(ltID)
+func (s *LessonTitleServiceImpl) Update(ltId int, input web.LessonTitleCreateInput) web.LessonTitleResponse {
+	findById, err := s.LessonTitleRepository.FindById(ltId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 	if input.Title != "" {
-		findByID.Title = input.Title
+		findById.Title = input.Title
 	}
 	if input.InOrder != 0 {
-		findByID.InOrder = input.InOrder
+		findById.InOrder = input.InOrder
 	}
 
-	return formatter.ToLessonTitleResponse(s.LessonTitleRepository.Update(findByID))
+	return helper.ToLessonTitleResponse(s.LessonTitleRepository.Update(findById))
 }
 
-func (s *LessonTitleServiceImpl) FindByCourseID(courseID int) []web.LessonTitleResponse {
-	lessonTitles, err := s.LessonTitleRepository.FindByCourseID(courseID)
+func (s *LessonTitleServiceImpl) FindByCourseId(courseId int) []web.LessonTitleResponse {
+	lessonTitles, err := s.LessonTitleRepository.FindByCourseId(courseId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	return formatter.ToLessonTitlesResponse(lessonTitles)
+	return helper.ToLessonTitlesResponse(lessonTitles)
 }
 
 func (s *LessonTitleServiceImpl) Create(input web.LessonTitleCreateInput) web.LessonTitleResponse {
 	lt := domain.LessonTitle{}
-	lt.CourseID = input.CourseID
+	lt.CourseId = input.CourseId
 	lt.Title = input.Title
 	lt.InOrder = input.InOrder
 
-	course := s.CourseService.FindByID(input.CourseID)
-	if course.AuthorID != input.AuthorID {
+	course := s.CourseService.FindById(input.CourseId)
+	if course.AuthorId != input.AuthorId {
 		panic(helper.NewUnauthorizedError("You're not an author for this courses"))
 	}
 
 	lessonTitle := s.LessonTitleRepository.Save(lt)
-	return formatter.ToLessonTitleResponse(lessonTitle)
+	return helper.ToLessonTitleResponse(lessonTitle)
 }
 
 func NewLessonTitleService(lessonTitleRepository repository.LessonTitleRepository, courseService CourseService) LessonTitleService {

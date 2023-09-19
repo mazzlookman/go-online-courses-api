@@ -7,5 +7,5 @@ type AuthorController interface {
 	Login(ctx *gin.Context)
 	UploadAvatar(ctx *gin.Context)
 	Logout(ctx *gin.Context)
-	GetByID(ctx *gin.Context)
+	GetById(ctx *gin.Context)
 }

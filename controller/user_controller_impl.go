@@ -13,8 +13,8 @@ type UserControllerImpl struct {
 }
 
 func (c *UserControllerImpl) Logout(ctx *gin.Context) {
-	userID := ctx.MustGet("current_user").(web.UserResponse).ID
-	userResponse := c.UserService.Logout(userID)
+	userId := ctx.MustGet("current_user").(web.UserResponse).Id
+	userResponse := c.UserService.Logout(userId)
 	if userResponse.Token == "" {
 		ctx.JSON(200,
 			helper.APIResponse(200, "You're logged out",
@@ -26,10 +26,10 @@ func (c *UserControllerImpl) Logout(ctx *gin.Context) {
 func (c *UserControllerImpl) UploadAvatar(ctx *gin.Context) {
 	fileHeader, err := ctx.FormFile("avatar")
 	helper.PanicIfError(err)
-	userID := ctx.MustGet("current_user").(web.UserResponse).ID
-	filePath := fmt.Sprintf("assets/images/avatars/%d-%s", userID, fileHeader.Filename)
+	user := ctx.MustGet("current_user").(web.UserResponse)
+	filePath := fmt.Sprintf("assets/images/avatars/%s-%s", user.Email, fileHeader.Filename)
 
-	uploadAvatar := c.UserService.UploadAvatar(userID, filePath)
+	uploadAvatar := c.UserService.UploadAvatar(user.Id, filePath)
 
 	err = ctx.SaveUploadedFile(fileHeader, filePath)
 	helper.PanicIfError(err)
@@ -41,13 +41,13 @@ func (c *UserControllerImpl) UploadAvatar(ctx *gin.Context) {
 	)
 }
 
-func (c *UserControllerImpl) GetByID(ctx *gin.Context) {
-	// user_id from token
+func (c *UserControllerImpl) GetById(ctx *gin.Context) {
+	// user_Id from token
 	user := ctx.MustGet("current_user").(web.UserResponse)
-	findByID := c.UserService.FindByID(user.ID)
+	findById := c.UserService.FindById(user.Id)
 	ctx.JSON(
 		200,
-		helper.APIResponse(200, "Current user: "+findByID.Name, findByID),
+		helper.APIResponse(200, "Current user: "+findById.Name, findById),
 	)
 }
 

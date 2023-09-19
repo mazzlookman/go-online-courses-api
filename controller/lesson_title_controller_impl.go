@@ -16,16 +16,16 @@ func (c *LessonTitleControllerImpl) Update(ctx *gin.Context) {
 	input := web.LessonTitleCreateInput{}
 	err := ctx.ShouldBindJSON(&input)
 	helper.PanicIfError(err)
-	ltID, _ := strconv.Atoi(ctx.Param("ltID"))
+	ltId, _ := strconv.Atoi(ctx.Param("ltId"))
 
-	lessonTitleResponse := c.LessonTitleService.Update(ltID, input)
+	lessonTitleResponse := c.LessonTitleService.Update(ltId, input)
 	ctx.JSON(200,
 		helper.APIResponse(200, "Lesson title is successfully updated", lessonTitleResponse))
 }
 
-func (c *LessonTitleControllerImpl) GetByCourseID(ctx *gin.Context) {
-	courseID, _ := strconv.Atoi(ctx.Param("courseID"))
-	lessonTitlesResponse := c.LessonTitleService.FindByCourseID(courseID)
+func (c *LessonTitleControllerImpl) GetByCourseId(ctx *gin.Context) {
+	courseId, _ := strconv.Atoi(ctx.Param("courseId"))
+	lessonTitlesResponse := c.LessonTitleService.FindByCourseId(courseId)
 
 	ctx.JSON(200,
 		helper.APIResponse(200, "List of lesson titles", lessonTitlesResponse))
@@ -36,11 +36,11 @@ func (c *LessonTitleControllerImpl) Create(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&input)
 	helper.PanicIfError(err)
 
-	courseID, _ := strconv.Atoi(ctx.Param("courseID"))
-	input.CourseID = courseID
+	courseId, _ := strconv.Atoi(ctx.Param("courseId"))
+	input.CourseId = courseId
 
-	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
-	input.AuthorID = authorID
+	authorId := ctx.MustGet("current_author").(web.AuthorResponse).Id
+	input.AuthorId = authorId
 
 	lessonTitleResponse := c.LessonTitleService.Create(input)
 	ctx.JSON(200,

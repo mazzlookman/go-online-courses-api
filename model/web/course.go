@@ -1,7 +1,7 @@
 package web
 
 type CourseCreateInput struct {
-	AuthorID    int
+	AuthorId    int
 	Title       string `json:"title" binding:"required"`
 	Slug        string `json:"slug" binding:"required"`
 	Description string `json:"description" binding:"required"`
@@ -11,8 +11,8 @@ type CourseCreateInput struct {
 }
 
 type CourseResponse struct {
-	ID            int    `json:"id"`
-	AuthorID      int    `json:"author_id"`
+	Id            int    `json:"id"`
+	AuthorId      int    `json:"author_id"`
 	Title         string `json:"title"`
 	Slug          string `json:"slug"`
 	Description   string `json:"description"`
@@ -23,8 +23,8 @@ type CourseResponse struct {
 }
 
 type CourseBySlugResponse struct {
-	ID            int            `json:"id"`
-	AuthorID      int            `json:"author_id"`
+	Id            int            `json:"id"`
+	AuthorId      int            `json:"author_id"`
 	Title         string         `json:"title"`
 	Slug          string         `json:"slug"`
 	Description   string         `json:"description"`

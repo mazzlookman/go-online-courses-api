@@ -34,6 +34,6 @@ type ResponseErrorKey struct {
 	Error string `json:"errors"`
 }
 
-func NewResponseErrorKey(error string) *ResponseErrorKey {
-	return &ResponseErrorKey{Error: error}
+func NewResponseErrorKey(error string) ResponseErrorKey {
+	return ResponseErrorKey{Error: error}
 }

@@ -26,7 +26,7 @@ func UserJwtAuthMiddleware(jwtAuth auth.JwtAuth, userService service.UserService
 		claims := validateJwtToken.Claims.(jwt.MapClaims)
 		userID := int(claims["user_id"].(float64))
 
-		findByID := userService.FindByID(userID)
+		findByID := userService.FindById(userID)
 		ctx.Set("current_user", findByID)
 	}
 }
@@ -52,7 +52,7 @@ func AuthorJwtAuthMiddleware(jwtAuth auth.JwtAuth, authorService service.AuthorS
 
 		authorID := int(claims["author_id"].(float64))
 
-		findByID := authorService.FindByID(authorID)
+		findByID := authorService.FindById(authorID)
 		ctx.Set("current_author", findByID)
 	}
 }

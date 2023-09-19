@@ -14,7 +14,7 @@ type UserRepositoryImpl struct {
 func (r *UserRepositoryImpl) FindByEmail(email string) (domain.User, error) {
 	user := domain.User{}
 	err := r.db.Find(&user, "email=?", email).Error
-	if err != nil || user.ID == 0 {
+	if err != nil || user.Id == 0 {
 		return user, errors.New("User is not found")
 	}
 
@@ -35,10 +35,10 @@ func (r *UserRepositoryImpl) Update(user domain.User) domain.User {
 	return user
 }
 
-func (r *UserRepositoryImpl) FindByID(userID int) (domain.User, error) {
+func (r *UserRepositoryImpl) FindById(userId int) (domain.User, error) {
 	user := domain.User{}
-	err := r.db.Preload("Courses").Where("id=?", userID).Find(&user).Error
-	if err != nil || user.ID == 0 {
+	err := r.db.Preload("Courses").Where("id=?", userId).Find(&user).Error
+	if err != nil || user.Id == 0 {
 		return user, errors.New("User is not found")
 	}
 

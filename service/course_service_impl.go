@@ -13,6 +13,11 @@ import (
 
 type CourseServiceImpl struct {
 	repository.CourseRepository
+	TransactionService
+}
+
+func (s *CourseServiceImpl) FindAllCourseIdByUserId(userId int) []string {
+	return s.CourseRepository.FindAllCourseIdByUserId(userId)
 }
 
 func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResponse {
@@ -23,7 +28,7 @@ func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResp
 
 	coursesResponse := []web.CourseResponse{}
 	for _, course := range courses {
-		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.Id)
 		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
 		coursesResponse = append(coursesResponse, courseResponse)
 	}
@@ -31,15 +36,15 @@ func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResp
 	return coursesResponse
 }
 
-func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
-	courses, err := s.CourseRepository.FindByUserID(userID)
+func (s *CourseServiceImpl) FindByUserId(userId int) []web.CourseResponse {
+	courses, err := s.CourseRepository.FindByUserId(userId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}
 	for _, course := range courses {
-		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.Id)
 		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
 		coursesResponse = append(coursesResponse, courseResponse)
 	}
@@ -47,32 +52,32 @@ func (s *CourseServiceImpl) FindByUserID(userID int) []web.CourseResponse {
 	return coursesResponse
 }
 
-func (s *CourseServiceImpl) UploadBanner(courseID int, pathFile string) bool {
-	findByID, err := s.CourseRepository.FindByID(courseID)
+func (s *CourseServiceImpl) UploadBanner(courseId int, pathFile string) bool {
+	findById, err := s.CourseRepository.FindById(courseId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	if findByID.Banner != pathFile {
-		if findByID.Banner == "" {
-			return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
+	if findById.Banner != pathFile {
+		if findById.Banner == "" {
+			return updateWhenUploadBanner(findById, pathFile, s.CourseRepository)
 		}
-		os.Remove(findByID.Banner)
-		return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
+		os.Remove(findById.Banner)
+		return updateWhenUploadBanner(findById, pathFile, s.CourseRepository)
 	}
 
-	return updateWhenUploadBanner(findByID, pathFile, s.CourseRepository)
+	return updateWhenUploadBanner(findById, pathFile, s.CourseRepository)
 }
 
-func (s *CourseServiceImpl) UserEnrolled(userID int, courseID int) domain.UserCourse {
-	_, err := s.CourseRepository.FindByID(courseID)
+func (s *CourseServiceImpl) UserEnrolled(userId int, courseId int) domain.UserCourse {
+	_, err := s.CourseRepository.FindById(courseId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	userCourse := domain.UserCourse{
-		CourseID: courseID,
-		UserID:   userID,
+		CourseId: courseId,
+		UserId:   userId,
 	}
 
 	usersEnrolled, err := s.CourseRepository.UsersEnrolled(userCourse)
@@ -89,7 +94,7 @@ func (s *CourseServiceImpl) FindAll() []web.CourseResponse {
 
 	coursesResponse := []web.CourseResponse{}
 	for _, course := range courses {
-		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.Id)
 		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
 		coursesResponse = append(coursesResponse, courseResponse)
 	}
@@ -97,15 +102,15 @@ func (s *CourseServiceImpl) FindAll() []web.CourseResponse {
 	return coursesResponse
 }
 
-func (s *CourseServiceImpl) FindByAuthorID(authorID int) []web.CourseResponse {
-	courses, err := s.CourseRepository.FindByAuthorID(authorID)
+func (s *CourseServiceImpl) FindByAuthorId(authorId int) []web.CourseResponse {
+	courses, err := s.CourseRepository.FindByAuthorId(authorId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}
 	for _, course := range courses {
-		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.ID)
+		countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(course.Id)
 		courseResponse := helper.ToCourseResponse(course, countUsersEnrolled)
 		coursesResponse = append(coursesResponse, courseResponse)
 	}
@@ -119,22 +124,22 @@ func (s *CourseServiceImpl) FindBySlug(slug string) web.CourseBySlugResponse {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findBySlug.ID)
+	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findBySlug.Id)
 	return helper.ToCourseBySlugResponse(findBySlug, countUsersEnrolled)
 }
 
-func (s *CourseServiceImpl) FindByID(courseID int) web.CourseResponse {
-	findByID, err := s.CourseRepository.FindByID(courseID)
+func (s *CourseServiceImpl) FindById(courseId int) web.CourseResponse {
+	findById, err := s.CourseRepository.FindById(courseId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
-	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findByID.ID)
-	return helper.ToCourseResponse(findByID, countUsersEnrolled)
+	countUsersEnrolled := s.CourseRepository.CountUsersEnrolled(findById.Id)
+	return helper.ToCourseResponse(findById, countUsersEnrolled)
 }
 
 func (s *CourseServiceImpl) Create(request web.CourseCreateInput) web.CourseResponse {
 	course := domain.Course{
-		AuthorID:    request.AuthorID,
+		AuthorId:    request.AuthorId,
 		Title:       request.Title,
 		Slug:        request.Slug,
 		Description: request.Description,
@@ -142,12 +147,12 @@ func (s *CourseServiceImpl) Create(request web.CourseCreateInput) web.CourseResp
 		Price:       request.Price,
 	}
 
-	if course.AuthorID == 0 {
+	if course.AuthorId == 0 {
 		panic(helper.NewUnauthorizedError("You're not an author"))
 	}
 
 	save := s.CourseRepository.Save(course)
-	categoryCourse := s.CourseRepository.SaveToCategoryCourse(strings.ToLower(request.Category), save.ID)
+	categoryCourse := s.CourseRepository.SaveToCategoryCourse(strings.ToLower(request.Category), save.Id)
 	if !categoryCourse {
 		panic(errors.New("Failed to create category for this course"))
 	}

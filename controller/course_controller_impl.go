@@ -17,25 +17,25 @@ func (c *CourseControllerImpl) GetByCategory(ctx *gin.Context) {
 	courseResponses := c.CourseService.FindByCategory(ctx.Param("categoryName"))
 
 	ctx.JSON(200,
-		helper.APIResponse(200, "List of course", courseResponses),
+		helper.APIResponse(200, "List of courses", courseResponses),
 	)
 }
 
-func (c *CourseControllerImpl) GetByUserID(ctx *gin.Context) {
-	userID := ctx.MustGet("current_user").(web.UserResponse).ID
-	courseResponses := c.CourseService.FindByUserID(userID)
+func (c *CourseControllerImpl) GetByUserId(ctx *gin.Context) {
+	userId := ctx.MustGet("current_user").(web.UserResponse).Id
+	courseResponses := c.CourseService.FindByUserId(userId)
 
 	ctx.JSON(200,
-		helper.APIResponse(200, "List of course", courseResponses),
+		helper.APIResponse(200, "List of courses", courseResponses),
 	)
 }
 
 func (c *CourseControllerImpl) UploadBanner(ctx *gin.Context) {
-	courseID, _ := strconv.Atoi(ctx.Param("courseID"))
+	courseId, _ := strconv.Atoi(ctx.Param("courseId"))
 	fileHeader, _ := ctx.FormFile("banner")
 
-	pathFile := fmt.Sprintf("assets/images/avatars/%d-%s", courseID, fileHeader.Filename)
-	uploadBanner := c.CourseService.UploadBanner(courseID, pathFile)
+	pathFile := fmt.Sprintf("assets/images/banners/%d-%s", courseId, fileHeader.Filename)
+	uploadBanner := c.CourseService.UploadBanner(courseId, pathFile)
 
 	ctx.SaveUploadedFile(fileHeader, pathFile)
 
@@ -47,10 +47,10 @@ func (c *CourseControllerImpl) UploadBanner(ctx *gin.Context) {
 
 func (c *CourseControllerImpl) UserEnrolled(ctx *gin.Context) {
 	user := ctx.MustGet("current_user").(web.UserResponse)
-	courseID, err := strconv.Atoi(ctx.Param("courseID"))
+	courseId, err := strconv.Atoi(ctx.Param("courseId"))
 	helper.PanicIfError(err)
 
-	c.CourseService.UserEnrolled(user.ID, courseID)
+	c.CourseService.UserEnrolled(user.Id, courseId)
 
 	ctx.JSON(200,
 		helper.APIResponse(200, "Success to enrolled",
@@ -61,16 +61,16 @@ func (c *CourseControllerImpl) UserEnrolled(ctx *gin.Context) {
 func (c *CourseControllerImpl) GetAll(ctx *gin.Context) {
 	courseResponses := c.CourseService.FindAll()
 	ctx.JSON(200,
-		helper.APIResponse(200, "List of course", courseResponses),
+		helper.APIResponse(200, "List of courses", courseResponses),
 	)
 }
 
-func (c *CourseControllerImpl) GetByAuthorID(ctx *gin.Context) {
-	param := ctx.Param("authorID")
-	authorID, _ := strconv.Atoi(param)
-	courseResponse := c.CourseService.FindByAuthorID(authorID)
+func (c *CourseControllerImpl) GetByAuthorId(ctx *gin.Context) {
+	param := ctx.Param("authorId")
+	authorId, _ := strconv.Atoi(param)
+	courseResponse := c.CourseService.FindByAuthorId(authorId)
 	ctx.JSON(200,
-		helper.APIResponse(200, "List of course", courseResponse),
+		helper.APIResponse(200, "List of courses", courseResponse),
 	)
 }
 
@@ -78,7 +78,7 @@ func (c *CourseControllerImpl) GetBySlug(ctx *gin.Context) {
 	slug := ctx.Param("slug")
 	courseResponse := c.CourseService.FindBySlug(slug)
 	ctx.JSON(200,
-		helper.APIResponse(200, "Detail of course", courseResponse),
+		helper.APIResponse(200, "Course detail", courseResponse),
 	)
 }
 
@@ -87,8 +87,8 @@ func (c *CourseControllerImpl) Create(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&request)
 	helper.PanicIfError(err)
 
-	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
-	request.AuthorID = authorID
+	authorId := ctx.MustGet("current_author").(web.AuthorResponse).Id
+	request.AuthorId = authorId
 
 	courseResponse := c.CourseService.Create(request)
 	ctx.JSON(200,

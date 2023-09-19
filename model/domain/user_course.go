@@ -1,6 +1,6 @@
 package domain
 
 type UserCourse struct {
-	CourseID int
-	UserID   int
+	CourseId int
+	UserId   int
 }

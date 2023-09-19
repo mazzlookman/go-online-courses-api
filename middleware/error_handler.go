@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go-pzn-restful-api/helper"
@@ -87,6 +88,6 @@ func internalServerError(ctx *gin.Context, err any) {
 	ctx.Writer.WriteHeader(http.StatusInternalServerError)
 	ctx.AbortWithStatusJSON(
 		http.StatusInternalServerError,
-		helper.APIResponse(http.StatusInternalServerError, "Internal Server Error", helper.NewResponseErrorKey(err.(string))),
+		helper.APIResponse(http.StatusInternalServerError, "Internal Server Error", helper.NewResponseErrorKey(fmt.Sprintf("%v", err))),
 	)
 }

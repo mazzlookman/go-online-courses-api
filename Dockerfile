@@ -9,9 +9,10 @@ COPY . ./
 RUN go build -o ./pzn-api main.go
 
 FROM alpine:latest
-RUN apk update
-RUN apk upgrade
+RUN apk update && apk upgrade
 RUN apk add --no-cache ffmpeg
+RUN apk add --no-cache tzdata
+ENV TZ=Asia/Jakarta
 
 WORKDIR /app
 COPY --from=stage_1 /app/pzn-api ./

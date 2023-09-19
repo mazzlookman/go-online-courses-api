@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type LessonContent struct {
-	ID            int `gorm:"primaryKey"`
-	LessonTitleID int
+	Id            int `gorm:"primaryKey"`
+	LessonTitleId int
 	Content       string `gorm:"not null;default:unknown"`
 	Duration      string
 	InOrder       int       `gorm:"type:int"`

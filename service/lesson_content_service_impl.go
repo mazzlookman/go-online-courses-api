@@ -13,8 +13,17 @@ type LessonContentServiceImpl struct {
 	CourseService
 }
 
-func (s *LessonContentServiceImpl) FindByLessonTitleID(ltID int) []web.LessonContentResponse {
-	lessonContents, err := s.LessonContentRepository.FindByLessonTitleID(ltID)
+func (s *LessonContentServiceImpl) FindById(lcId int) web.LessonContentResponse {
+	lessonContent, err := s.LessonContentRepository.FindById(lcId)
+	if err != nil {
+		panic(helper.NewNotFoundError(err.Error()))
+	}
+
+	return helper.ToLessonContentResponse(lessonContent)
+}
+
+func (s *LessonContentServiceImpl) FindByLessonTitleId(ltId int) []web.LessonContentResponse {
+	lessonContents, err := s.LessonContentRepository.FindByLessonTitleId(ltId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
@@ -22,26 +31,26 @@ func (s *LessonContentServiceImpl) FindByLessonTitleID(ltID int) []web.LessonCon
 	return helper.ToLessonContentsResponse(lessonContents)
 }
 
-func (s *LessonContentServiceImpl) Update(lcID int, input web.LessonContentCreateInput) web.LessonContentResponse {
-	course := s.CourseService.FindByID(input.CourseID)
-	if course.AuthorID != input.AuthorID {
+func (s *LessonContentServiceImpl) Update(lcId int, input web.LessonContentUpdateInput) web.LessonContentResponse {
+	course := s.CourseService.FindById(input.CourseId)
+	if course.AuthorId != input.AuthorId {
 		panic(helper.NewUnauthorizedError("You're not an author of this courses"))
 	}
 
-	findByID, err := s.LessonContentRepository.FindByID(lcID)
-	oldContent := findByID.Content
+	findById, err := s.LessonContentRepository.FindById(lcId)
+	oldContent := findById.Content
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	if input.InOrder != 0 {
-		findByID.InOrder = input.InOrder
+		findById.InOrder = input.InOrder
 	}
 
 	if input.Content != "" {
-		findByID.Content = input.Content
-		findByID.Duration = helper.GetLessonContentVideoDuration(input.Content)
-		lessonContent, err := s.LessonContentRepository.Update(findByID)
+		findById.Content = input.Content
+		findById.Duration = helper.GetLessonContentVideoDuration(input.Content)
+		lessonContent, err := s.LessonContentRepository.Update(findById)
 		helper.PanicIfError(err)
 		if oldContent != lessonContent.Content {
 			os.Remove(oldContent)
@@ -49,19 +58,19 @@ func (s *LessonContentServiceImpl) Update(lcID int, input web.LessonContentCreat
 		return helper.ToLessonContentResponse(lessonContent)
 	}
 
-	lessonContent, err := s.LessonContentRepository.Update(findByID)
+	lessonContent, err := s.LessonContentRepository.Update(findById)
 	helper.PanicIfError(err)
 	return helper.ToLessonContentResponse(lessonContent)
 }
 
 func (s *LessonContentServiceImpl) Create(input web.LessonContentCreateInput) web.LessonContentResponse {
-	course := s.CourseService.FindByID(input.CourseID)
-	if course.AuthorID != input.AuthorID {
+	course := s.CourseService.FindById(input.CourseId)
+	if course.AuthorId != input.AuthorId {
 		panic(helper.NewUnauthorizedError("You're not an author of this courses"))
 	}
 
 	lessonContent := domain.LessonContent{}
-	lessonContent.LessonTitleID = input.LessonTitleID
+	lessonContent.LessonTitleId = input.LessonTitleId
 	lessonContent.Content = input.Content
 	lessonContent.InOrder = input.InOrder
 	lessonContent.Duration = helper.GetLessonContentVideoDuration(input.Content)

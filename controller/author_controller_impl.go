@@ -18,7 +18,7 @@ func (c *AuthorControllerImpl) UploadAvatar(ctx *gin.Context) {
 	author := ctx.MustGet("current_author").(web.AuthorResponse)
 	filePath := fmt.Sprintf("assets/images/avatars/%s-%s", author.Email, fileHeader.Filename)
 
-	uploadAvatar := c.AuthorService.UploadAvatar(author.ID, filePath)
+	uploadAvatar := c.AuthorService.UploadAvatar(author.Id, filePath)
 
 	err = ctx.SaveUploadedFile(fileHeader, filePath)
 	helper.PanicIfError(err)
@@ -30,18 +30,18 @@ func (c *AuthorControllerImpl) UploadAvatar(ctx *gin.Context) {
 	)
 }
 
-func (c *AuthorControllerImpl) GetByID(ctx *gin.Context) {
+func (c *AuthorControllerImpl) GetById(ctx *gin.Context) {
 	// terakhir sampe sini
-	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
-	authorResponse := c.AuthorService.FindByID(authorID)
+	authorId := ctx.MustGet("current_author").(web.AuthorResponse).Id
+	authorResponse := c.AuthorService.FindById(authorId)
 	ctx.JSON(200,
 		helper.APIResponse(200, "Detail of author", authorResponse),
 	)
 }
 
 func (c *AuthorControllerImpl) Logout(ctx *gin.Context) {
-	authorID := ctx.MustGet("current_author").(web.AuthorResponse).ID
-	logout := c.AuthorService.Logout(authorID)
+	authorId := ctx.MustGet("current_author").(web.AuthorResponse).Id
+	logout := c.AuthorService.Logout(authorId)
 
 	if logout.Token == "" {
 		ctx.JSON(200,

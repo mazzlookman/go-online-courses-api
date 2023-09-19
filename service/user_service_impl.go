@@ -16,44 +16,44 @@ type UserServiceImpl struct {
 	auth.JwtAuth
 }
 
-func (s *UserServiceImpl) Logout(userID int) web.UserResponse {
-	findByID, err := s.UserRepository.FindByID(userID)
+func (s *UserServiceImpl) Logout(userId int) web.UserResponse {
+	findById, err := s.UserRepository.FindById(userId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	findByID.Token = ""
-	update := s.UserRepository.Update(findByID)
+	findById.Token = ""
+	update := s.UserRepository.Update(findById)
 
 	return helper.ToUserResponse(update)
 }
 
-func (s *UserServiceImpl) UploadAvatar(userID int, filePath string) web.UserResponse {
-	findByID, err := s.UserRepository.FindByID(userID)
-	oldAvatar := findByID.Avatar
+func (s *UserServiceImpl) UploadAvatar(userId int, filePath string) web.UserResponse {
+	findById, err := s.UserRepository.FindById(userId)
+	oldAvatar := findById.Avatar
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	if oldAvatar != filePath {
-		if findByID.Avatar == "" {
-			return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
+		if findById.Avatar == "" {
+			return updateWhenUploadAvatar(findById, filePath, s.UserRepository)
 		}
 		err := os.Remove(oldAvatar)
 		helper.PanicIfError(err)
-		return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
+		return updateWhenUploadAvatar(findById, filePath, s.UserRepository)
 	}
 
-	return updateWhenUploadAvatar(findByID, filePath, s.UserRepository)
+	return updateWhenUploadAvatar(findById, filePath, s.UserRepository)
 }
 
-func (s *UserServiceImpl) FindByID(userID int) web.UserResponse {
-	findByID, err := s.UserRepository.FindByID(userID)
+func (s *UserServiceImpl) FindById(userId int) web.UserResponse {
+	findById, err := s.UserRepository.FindById(userId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	return helper.ToUserResponse(findByID)
+	return helper.ToUserResponse(findById)
 }
 
 func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
@@ -67,7 +67,7 @@ func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 		panic(helper.NewBadRequestError(errors.New("Email or password is wrong").Error()))
 	}
 
-	token, _ := s.JwtAuth.GenerateJwtToken("user", findByEmail.ID)
+	token, _ := s.JwtAuth.GenerateJwtToken("user", findByEmail.Id)
 	findByEmail.Token = token
 
 	update := s.UserRepository.Update(findByEmail)
@@ -77,7 +77,7 @@ func (s *UserServiceImpl) Login(input web.UserLoginInput) web.UserResponse {
 
 func (s *UserServiceImpl) Register(input web.UserRegisterInput) web.UserResponse {
 	findByEmail, err := s.UserRepository.FindByEmail(input.Email)
-	if findByEmail.ID != 0 {
+	if findByEmail.Id != 0 {
 		panic(helper.NewNotFoundError(errors.New("Email has been registered").Error()))
 	}
 

@@ -13,7 +13,7 @@ type AuthorLoginInput struct {
 }
 
 type AuthorResponse struct {
-	ID      int    `json:"id"`
+	Id      int    `json:"id"`
 	Name    string `json:"name"`
 	Email   string `json:"email"`
 	Profile string `json:"profile"`

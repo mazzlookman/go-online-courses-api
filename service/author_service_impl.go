@@ -16,41 +16,41 @@ type AuthorServiceImpl struct {
 	auth.JwtAuth
 }
 
-func (s *AuthorServiceImpl) UploadAvatar(authorID int, filePath string) web.AuthorResponse {
-	findByID, err := s.AuthorRepository.FindByID(authorID)
-	oldAvatar := findByID.Avatar
+func (s *AuthorServiceImpl) UploadAvatar(authorId int, filePath string) web.AuthorResponse {
+	findById, err := s.AuthorRepository.FindById(authorId)
+	oldAvatar := findById.Avatar
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	if oldAvatar != filePath {
-		if findByID.Avatar == "" {
-			return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
+		if findById.Avatar == "" {
+			return authorUploadAvatar(findById, filePath, s.AuthorRepository)
 		}
 		err := os.Remove(oldAvatar)
 		helper.PanicIfError(err)
-		return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
+		return authorUploadAvatar(findById, filePath, s.AuthorRepository)
 	}
 
-	return authorUploadAvatar(findByID, filePath, s.AuthorRepository)
+	return authorUploadAvatar(findById, filePath, s.AuthorRepository)
 }
 
-func (s *AuthorServiceImpl) Logout(authorID int) web.AuthorResponse {
-	findByID, err := s.AuthorRepository.FindByID(authorID)
+func (s *AuthorServiceImpl) Logout(authorId int) web.AuthorResponse {
+	findById, err := s.AuthorRepository.FindById(authorId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	findByID.Token = ""
-	update := s.AuthorRepository.Update(findByID)
+	findById.Token = ""
+	update := s.AuthorRepository.Update(findById)
 
 	return helper.ToAuthorResponse(update)
 }
 
 func (s *AuthorServiceImpl) Register(input web.AuthorRegisterInput) web.AuthorResponse {
 	author := domain.Author{}
-	findByID, _ := s.AuthorRepository.FindByEmail(input.Email)
-	if findByID.ID != 0 {
+	findById, _ := s.AuthorRepository.FindByEmail(input.Email)
+	if findById.Id != 0 {
 		panic(errors.New("Email has been registered").Error())
 	}
 
@@ -67,7 +67,7 @@ func (s *AuthorServiceImpl) Register(input web.AuthorRegisterInput) web.AuthorRe
 
 func (s *AuthorServiceImpl) Login(input web.AuthorLoginInput) web.AuthorResponse {
 	findByEmail, err := s.AuthorRepository.FindByEmail(input.Email)
-	if err != nil || findByEmail.ID == 0 {
+	if err != nil || findByEmail.Id == 0 {
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
@@ -76,7 +76,7 @@ func (s *AuthorServiceImpl) Login(input web.AuthorLoginInput) web.AuthorResponse
 		panic(helper.NewNotFoundError(errors.New("Email or password is wrong").Error()))
 	}
 
-	token, _ := s.JwtAuth.GenerateJwtToken("author", findByEmail.ID)
+	token, _ := s.JwtAuth.GenerateJwtToken("author", findByEmail.Id)
 	findByEmail.Token = token
 
 	update := s.AuthorRepository.Update(findByEmail)
@@ -84,13 +84,13 @@ func (s *AuthorServiceImpl) Login(input web.AuthorLoginInput) web.AuthorResponse
 	return helper.ToAuthorResponse(update)
 }
 
-func (s *AuthorServiceImpl) FindByID(authorID int) web.AuthorResponse {
-	findByID, err := s.AuthorRepository.FindByID(authorID)
+func (s *AuthorServiceImpl) FindById(authorId int) web.AuthorResponse {
+	findById, err := s.AuthorRepository.FindById(authorId)
 	if err != nil {
 		panic(helper.NewNotFoundError(err.Error()))
 	}
 
-	return helper.ToAuthorResponse(findByID)
+	return helper.ToAuthorResponse(findById)
 }
 
 func NewAuthorService(authorRepository repository.AuthorRepository, jwtAuth auth.JwtAuth) AuthorService {

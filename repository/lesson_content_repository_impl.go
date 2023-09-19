@@ -10,9 +10,9 @@ type LessonContentRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (r *LessonContentRepositoryImpl) FindByLessonTitleID(ltID int) ([]domain.LessonContent, error) {
+func (r *LessonContentRepositoryImpl) FindByLessonTitleId(ltId int) ([]domain.LessonContent, error) {
 	lessonContents := []domain.LessonContent{}
-	err := r.db.Order("in_order asc").Find(&lessonContents, "lesson_title_id=?", ltID).Error
+	err := r.db.Order("in_order asc").Find(&lessonContents, "lesson_title_id=?", ltId).Error
 	if len(lessonContents) == 0 || err != nil {
 		return nil, errors.New("Lesson contents not found")
 	}
@@ -28,12 +28,13 @@ func (r *LessonContentRepositoryImpl) Update(content domain.LessonContent) (doma
 	return content, nil
 }
 
-func (r *LessonContentRepositoryImpl) FindByID(lcID int) (domain.LessonContent, error) {
+func (r *LessonContentRepositoryImpl) FindById(lcId int) (domain.LessonContent, error) {
 	lc := domain.LessonContent{}
-	err := r.db.Find(&lc, "id=?", lcID).Error
-	if lc.ID == 0 || err != nil {
+	err := r.db.Find(&lc, "Id=?", lcId).Error
+	if lc.Id == 0 || err != nil {
 		return lc, errors.New("Lesson content not found")
 	}
+
 	return lc, nil
 }
 

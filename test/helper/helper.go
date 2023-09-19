@@ -49,7 +49,6 @@ func CreateAuthorTest() web.AuthorResponse {
 		Email:    "author@author.com",
 		Password: "123",
 		Profile:  "Profile",
-		Avatar:   "assets/images/avatars/author.jpg",
 	}
 
 	log.Println("Author has been created")
@@ -89,7 +88,7 @@ func DeleteCategoryTest() {
 // Course
 func CreateCourseTest(authorID int) web.CourseResponse {
 	return CourseService.Create(web.CourseCreateInput{
-		AuthorID:    authorID,
+		AuthorId:    authorID,
 		Title:       "Golang",
 		Slug:        "golang",
 		Description: "Desc",
@@ -101,8 +100,8 @@ func CreateCourseTest(authorID int) web.CourseResponse {
 
 func CreateUserCoursesTest(userID int, courseID int) domain.UserCourse {
 	userCourse, err := CourseRepository.UsersEnrolled(domain.UserCourse{
-		CourseID: courseID,
-		UserID:   userID,
+		CourseId: courseID,
+		UserId:   userID,
 	})
 
 	if err != nil {
@@ -130,7 +129,7 @@ func DeleteCategoryCoursesTest() {
 func GetCourseTest() web.CourseResponse {
 	CreateCategoryTest()
 	authorTest := CreateAuthorTest()
-	return CreateCourseTest(authorTest.ID)
+	return CreateCourseTest(authorTest.Id)
 }
 
 // Lesson Title
@@ -143,10 +142,10 @@ func DeleteLessonTitleTest() {
 
 func CreateLessonTitleTest(courseID int, authorID int) web.LessonTitleResponse {
 	return LessonTitleService.Create(web.LessonTitleCreateInput{
-		CourseID: courseID,
+		CourseId: courseID,
 		Title:    "title1",
 		InOrder:  1,
-		AuthorID: authorID,
+		AuthorId: authorID,
 	})
 }
 
@@ -160,9 +159,9 @@ func CreateLessonContentTest(authorID int, courseID int, ltID int) web.LessonCon
 	open.Close()
 
 	return LessonContentService.Create(web.LessonContentCreateInput{
-		AuthorID:      authorID,
-		CourseID:      courseID,
-		LessonTitleID: ltID,
+		AuthorId:      authorID,
+		CourseId:      courseID,
+		LessonTitleId: ltID,
 		Content:       "assets/contents/content.mov",
 		InOrder:       1,
 	})

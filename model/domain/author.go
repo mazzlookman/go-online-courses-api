@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Author struct {
-	ID        int `gorm:"primaryKey"`
+	Id        int `gorm:"primaryKey"`
 	Name      string
 	Email     string
 	Password  string

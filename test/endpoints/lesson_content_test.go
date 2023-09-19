@@ -29,7 +29,7 @@ func TestCreateLessonContentSuccess(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken := helper.GetAuthorToken()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -45,7 +45,7 @@ func TestCreateLessonContentSuccess(t *testing.T) {
 
 	req := httptest.NewRequest(
 		"POST",
-		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.ID)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.ID)+"/lesson-contents",
+		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.Id)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.Id)+"/lesson-contents",
 		reqBody,
 	)
 	req.Header.Add("Content-Type", multipartWriter.FormDataContentType())
@@ -67,7 +67,7 @@ func TestCreateLessonContentErrorNotACourseAuthor(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	notACourseAuthorToken, _ := helper.JwtAuth.GenerateJwtToken("author", 1)
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -83,7 +83,7 @@ func TestCreateLessonContentErrorNotACourseAuthor(t *testing.T) {
 
 	req := httptest.NewRequest(
 		"POST",
-		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.ID)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.ID)+"/lesson-contents",
+		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.Id)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.Id)+"/lesson-contents",
 		reqBody,
 	)
 	req.Header.Add("Content-Type", multipartWriter.FormDataContentType())
@@ -106,7 +106,7 @@ func TestCreateLessonContentErrorCourseNotFound(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken := helper.GetAuthorToken()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -122,7 +122,7 @@ func TestCreateLessonContentErrorCourseNotFound(t *testing.T) {
 
 	req := httptest.NewRequest(
 		"POST",
-		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.ID+1)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.ID)+"/lesson-contents",
+		"/api/v1/authors/courses/"+strconv.Itoa(courseTest.Id+1)+"/lesson-titles/"+strconv.Itoa(lessonTitleTest.Id)+"/lesson-contents",
 		reqBody,
 	)
 	req.Header.Add("Content-Type", multipartWriter.FormDataContentType())
@@ -145,12 +145,12 @@ func TestUpdateLessonContentSuccessContentOnly(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken := helper.GetAuthorToken()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
 
-	courseIDStr := strconv.Itoa(courseTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID)
-	lcIDStr := strconv.Itoa(lessonContentTest.ID)
+	courseIDStr := strconv.Itoa(courseTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id)
+	lcIDStr := strconv.Itoa(lessonContentTest.Id)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -190,12 +190,12 @@ func TestUpdateLessonContentSuccessInOrderOnly(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken := helper.GetAuthorToken()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
 
-	courseIDStr := strconv.Itoa(courseTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID)
-	lcIDStr := strconv.Itoa(lessonContentTest.ID)
+	courseIDStr := strconv.Itoa(courseTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id)
+	lcIDStr := strconv.Itoa(lessonContentTest.Id)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -228,12 +228,12 @@ func TestUpdateLessonContentErrorNotACourseAuthor(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken, _ := helper.JwtAuth.GenerateJwtToken("author", 1)
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
 
-	courseIDStr := strconv.Itoa(courseTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID)
-	lcIDStr := strconv.Itoa(lessonContentTest.ID)
+	courseIDStr := strconv.Itoa(courseTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id)
+	lcIDStr := strconv.Itoa(lessonContentTest.Id)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -272,12 +272,12 @@ func TestUpdateLessonContentErrorNotFound(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
 	authorToken := helper.GetAuthorToken()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	lessonContentTest := helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
 
-	courseIDStr := strconv.Itoa(courseTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID)
-	lcIDStr := strconv.Itoa(lessonContentTest.ID + 1)
+	courseIDStr := strconv.Itoa(courseTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id)
+	lcIDStr := strconv.Itoa(lessonContentTest.Id + 1)
 
 	reqBody := new(bytes.Buffer)
 	multipartWriter := multipart.NewWriter(reqBody)
@@ -308,9 +308,9 @@ func TestUpdateLessonContentErrorNotFound(t *testing.T) {
 func TestGetByLessonTitleIDSuccess(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id)
 
 	req := httptest.NewRequest(
 		"GET",
@@ -335,9 +335,9 @@ func TestGetByLessonTitleIDSuccess(t *testing.T) {
 func TestGetByLessonTitleErrorNotFound(t *testing.T) {
 	defer deleteAllLessonContents()
 	courseTest := helper.GetCourseTest()
-	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.ID, courseTest.AuthorID)
-	helper.CreateLessonContentTest(courseTest.AuthorID, courseTest.ID, lessonTitleTest.ID)
-	ltIDStr := strconv.Itoa(lessonTitleTest.ID + 1)
+	lessonTitleTest := helper.CreateLessonTitleTest(courseTest.Id, courseTest.AuthorId)
+	helper.CreateLessonContentTest(courseTest.AuthorId, courseTest.Id, lessonTitleTest.Id)
+	ltIDStr := strconv.Itoa(lessonTitleTest.Id + 1)
 
 	req := httptest.NewRequest(
 		"GET",

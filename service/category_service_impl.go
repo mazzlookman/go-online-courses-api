@@ -1,7 +1,7 @@
 package service
 
 import (
-	"go-pzn-restful-api/formatter"
+	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
 	"go-pzn-restful-api/repository"
@@ -17,7 +17,7 @@ func (s *CategoryServiceImpl) Create(input web.CategoryCreateInput) web.Category
 	}
 	category := s.CategoryRepository.Save(ctg)
 
-	return formatter.ToCategoryResponse(category)
+	return helper.ToCategoryResponse(category)
 }
 
 func NewCategoryService(categoryRepository repository.CategoryRepository) CategoryService {
