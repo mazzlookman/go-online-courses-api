@@ -17,7 +17,7 @@
           "AuthorAuth": []
         }],
         "tags": ["Lesson Title Endpoints"],
-        "summary": "Create a New Lesson Title",
+        "summary": "Create a new lesson title",
         "description": "This endpoint is used to create a new lesson title",
         "parameters": [{
           "name": "courseId",
@@ -84,7 +84,7 @@
           "AuthorAuth": []
         }],
         "tags": ["Lesson Title Endpoints"],
-        "summary": "Update Lesson Title",
+        "summary": "Update a lesson title",
         "description": "This endpoint is used to update a lesson title",
         "parameters": [{
           "name": "courseId",
@@ -100,6 +100,7 @@
             "application/json": {
               "schema": {
                 "description": "You can use any or all of request body field bellow",
+                "required": ["title","in_order"],
                 "type": "object",
                 "properties": {
                   "title": {
@@ -134,6 +135,40 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if course or lesson title not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/enrolled/:courseId/lesson-titles": {
+      "get": {
+        "tags": ["Lesson Title Endpoints"],
+        "summary": "Get all lesson titles in a course",
+        "description": "This endpoint is used to get all lesson titles in a course",
+        "parameters": [{
+          "name": "courseId",
+          "in": "path",
+          "description": "Course ID"
+        }],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonTitlesResponse"
                 }
               }
             }
@@ -191,6 +226,43 @@
               "in_order": {
                 "type": "integer",
                 "example": 1
+              }
+            }
+          }
+        }
+      },
+      "LessonTitlesResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "course_id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Golang Basic"
+                },
+                "in_order": {
+                  "type": "integer",
+                  "example": 1
+                }
               }
             }
           }

@@ -11,5 +11,420 @@
     }
   ],
   "paths": {
+    "/authors/courses/{courseId}/lesson-titles/{ltId}/lesson-contents": {
+      "post": {
+        "security": [
+          {
+            "AuthorAuth": []
+          }
+        ],
+        "tags": [
+          "Lesson Content Endpoints"
+        ],
+        "summary": "Create a new lesson content endpoint",
+        "description": "This endpoint is used to create a new lesson content",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "Course ID"
+          },
+          {
+            "name": "ltId",
+            "in": "path",
+            "description": "Lesson Title ID"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonContentInputRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonContentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/authors/courses/{courseId}/lesson-contents/{lcId}": {
+      "patch": {
+        "security": [
+          {
+            "AuthorAuth": []
+          }
+        ],
+        "tags": [
+          "Lesson Content Endpoints"
+        ],
+        "summary": "Update lesson content endpoint",
+        "description": "This endpoint is used to update a lesson content",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "Course ID"
+          },
+          {
+            "name": "lcId",
+            "in": "path",
+            "description": "Lesson Content ID"
+          }
+        ],
+        "requestBody": {
+          "description": "You can use any or all of request body field bellow",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonContentInputRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonContentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error response if request body not as required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error response if invalid authorization token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnauthorizedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if a course or lesson content not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/c/{courseId}/lesson-titles/{ltId}/lesson-contents": {
+      "get": {
+        "tags": [
+          "Lesson Content Endpoints"
+        ],
+        "summary": "Get all lesson contents in a lesson title",
+        "description": "This endpoint is used to get all lesson contents in a lesson title",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "Course ID"
+          },
+          {
+            "name": "ltId",
+            "in": "path",
+            "description": "Lesson Title ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonContentsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if a course or lesson content not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/c/:courseId/lesson-contents/:lcId": {
+      "get": {
+        "security": [{
+          "UserAuth": []
+        }],
+        "tags": [
+          "Lesson Content Endpoints"
+        ],
+        "summary": "Get a paid lesson content (user must purchased first)",
+        "description": "This endpoint is used to get a paid lesson content",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "description": "Course ID"
+          },
+          {
+            "name": "lcId",
+            "in": "path",
+            "description": "Lesson Content ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonContentResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error response if a course or lesson content not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "AuthorAuth": {
+        "description": "Authentication author for course endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "UserAuth": {
+        "description": "Authentication for user endpoints",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "LessonContentInputRequest": {
+        "type": "object",
+        "required": [
+          "content",
+          "in_order"
+        ],
+        "properties": {
+          "content": {
+            "type": "string",
+            "format": "binary",
+            "example": "bella-content.ts"
+          },
+          "in_order": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "LessonContentResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 1
+              },
+              "lesson_title_id": {
+                "type": "integer",
+                "example": 1
+              },
+              "content": {
+                "type": "string",
+                "example": "bella-content.ts"
+              },
+              "in_order": {
+                "type": "integer",
+                "example": 1
+              },
+              "duration": {
+                "type": "string",
+                "example": "28:02"
+              }
+            }
+          }
+        }
+      },
+      "LessonContentsResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "status": {
+            "type": "string",
+            "example": "OK"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "lesson_title_id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "content": {
+                  "type": "string",
+                  "example": "bella-content.ts"
+                },
+                "in_order": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "duration": {
+                  "type": "string",
+                  "example": "28:02"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BadRequestError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 400
+          },
+          "status": {
+            "type": "string",
+            "example": "Bad Request"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "bad request error message"
+              }
+            }
+          }
+        }
+      },
+      "UnauthorizedError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 401
+          },
+          "status": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "unauthorized error message"
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 404
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Found"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "string",
+                "example": "not found error message"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
