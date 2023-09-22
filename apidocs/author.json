@@ -14,11 +14,11 @@
     "/authors": {
       "post": {
         "tags": ["Author Endpoints"],
-        "summary": "Author Register Endpoint",
+        "summary": "Author registration",
         "description": "This endpoint is used to author registration",
         "requestBody": {
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "required": ["name", "email", "password", "profile"],
@@ -71,7 +71,7 @@
     "/authors/login": {
       "post": {
         "tags": ["Author Endpoints"],
-        "summary": "Author Login Endpoint",
+        "summary": "Author login",
         "description": "This endpoint is used for author login",
         "requestBody": {
           "content": {
@@ -123,7 +123,7 @@
           "AuthorAuth": []
         }],
         "tags": ["Author Endpoints"],
-        "summary": "Upload Avatar's Author Endpoint",
+        "summary": "Upload avatar's author",
         "description": "This endpoint is used for upload avatar's author",
         "requestBody": {
           "content": {
@@ -198,7 +198,7 @@
           "AuthorAuth": []
         }],
         "tags": ["Author Endpoints"],
-        "summary": "Author Logout Endpoint",
+        "summary": "Author logout",
         "description": "This endpoint is used for author logout",
         "responses": {
           "200": {
