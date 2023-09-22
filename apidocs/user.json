@@ -14,7 +14,7 @@
     "/users": {
       "post": {
         "tags": ["User Endpoints"],
-        "summary": "User Register Endpoint",
+        "summary": "Register a new user",
         "description": "This endpoint is used for register a new user",
         "requestBody": {
           "content": {
@@ -68,7 +68,7 @@
           "UserAuth": []
         }],
         "tags": ["User Endpoints"],
-        "summary": "Get Detail of User Profile",
+        "summary": "Get detail of user profile",
         "description": "This endpoint is used for get a detail of user profile",
         "responses": {
           "200": {
@@ -97,7 +97,7 @@
     "/users/login": {
       "post": {
         "tags": ["User Endpoints"],
-        "summary": "User Login Endpoint",
+        "summary": "Login user",
         "description": "This endpoint is used for login user",
         "requestBody": {
           "content": {
@@ -148,7 +148,7 @@
           "UserAuth": []
         }],
         "tags": ["User Endpoints"],
-        "summary": "Upload Avatar's User Endpoint",
+        "summary": "Upload avatar's user",
         "description": "This endpoint is used for upload avatar's user",
         "requestBody": {
           "content": {
@@ -213,6 +213,16 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Error response user not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundError"
+                }
+              }
+            }
           }
         }
       }
@@ -223,7 +233,7 @@
           "UserAuth": []
         }],
         "tags": ["User Endpoints"],
-        "summary": "User Logout Endpoint",
+        "summary": "Logout user",
         "description": "This endpoint is used for user logout",
         "responses": {
           "200": {

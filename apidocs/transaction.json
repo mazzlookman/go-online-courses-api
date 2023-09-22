@@ -11,39 +11,29 @@
     }
   ],
   "paths": {
-    "/categories": {
+    "/courses/:courseId/transactions": {
       "post": {
         "security": [{
-          "AuthorAuth": []
+          "UserAuth": []
         }],
-        "tags": ["Category Endpoints"],
-        "summary": "Create a new course's category",
-        "description": "This endpoint is used for create a new course's category",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Backend"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "tags": ["Transaction Endpoints"],
+        "summary": "Transaction for user purchasing a course",
+        "description": "This endpoint is used to user purchasing a course",
+        "parameters": [{
+          "name": "courseId",
+          "in": "path",
+          "description": "Course ID"
+        }],
         "responses": {
           "200": {
             "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "object",
                   "properties": {
                     "code": {
-                      "type": "number",
+                      "type": "integer",
                       "example": 200
                     },
                     "status": {
@@ -57,9 +47,25 @@
                           "type": "integer",
                           "example": 1
                         },
-                        "name": {
+                        "user_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "course_id": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "amount": {
+                          "type": "integer",
+                          "example": 99000
+                        },
+                        "status": {
                           "type": "string",
-                          "example": "Backend"
+                          "example": "pending"
+                        },
+                        "payment_url": {
+                          "type": "string",
+                          "example": "www.midtrans-payment-url.com"
                         }
                       }
                     }
@@ -94,8 +100,8 @@
   },
   "components": {
     "securitySchemes": {
-      "AuthorAuth": {
-        "description": "Authentication for author endpoints",
+      "UserAuth": {
+        "description": "Authentication for user endpoints",
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"

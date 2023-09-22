@@ -80,11 +80,12 @@ func NewRouter() *gin.Engine {
 	// Course endpoints
 	v1.POST("/courses", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.Create)
 	v1.PUT("/courses/:courseId/banners", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), courseController.UploadBanner)
-	v1.GET("/courses/authors/:authorID", courseController.GetByAuthorId)
+	v1.GET("/courses/authors/:authorId", courseController.GetByAuthorId)
 	v1.GET("/courses/:slug", courseController.GetBySlug)
 	v1.GET("/courses", courseController.GetAll)
 	v1.GET("/courses/categories/:categoryName", courseController.GetByCategory)
 	v1.GET("/courses/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.GetByUserId)
+	// keknya dibawah ini ga perlu deh, soalnya udah ada transaksi endpoint
 	v1.POST("/courses/:courseId/enrolled", middleware.UserJwtAuthMiddleware(jwtAuth, userService), courseController.UserEnrolled)
 
 	// Lesson title endpoints
@@ -93,10 +94,10 @@ func NewRouter() *gin.Engine {
 	v1.GET("/courses/enrolled/:courseId/lesson-titles", lessonTitleController.GetByCourseId)
 
 	// Lesson content endpoints
-	v1.POST("authors/courses/:courseId/lesson-titles/:ltId/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
-	v1.PATCH("authors/courses/:courseId/lesson-contents/:lcId", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
+	v1.POST("/authors/courses/:courseId/lesson-titles/:ltId/lesson-contents", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Create)
+	v1.PATCH("/authors/courses/:courseId/lesson-contents/:lcId", middleware.AuthorJwtAuthMiddleware(jwtAuth, authorService), lessonContentController.Update)
 	v1.GET("/c/:courseId/lesson-titles/:ltId/lesson-contents", lessonContentController.GetByLessonTitleId)
-	v1.GET("/c/:courseId/lesson-titles/lesson-contents/:lcId",
+	v1.GET("/c/:courseId/lesson-contents/:lcId",
 		middleware.UserJwtAuthMiddleware(jwtAuth, userService),
 		middleware.MidtransPaymentMiddleware(courseService),
 		lessonContentController.GetById,
