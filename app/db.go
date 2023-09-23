@@ -13,7 +13,7 @@ func DBConnection() *gorm.DB {
 	config.DefaultStringSize = 255                                                                    // default size for string fields
 	config.DSN = "root:@tcp(localhost:3306)/go_pzn_restful_api?charset=utf8&parseTime=True&loc=Local" // data source name for IDE
 
-	if os.Getenv("DB_DEV") == "docker" {
+	if os.Getenv("DB_RUN") == "docker" {
 		config.DSN = "root:root@tcp(mysql-db:3306)/go_pzn_restful_api?charset=utf8&parseTime=True&loc=Local" // data source name for docker
 	}
 

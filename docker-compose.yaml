@@ -16,7 +16,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     environment:
-      DB_DEV : docker
+      DB_RUN : docker
     ports:
       - "2802:2802"
     image: pzn-api:latest
