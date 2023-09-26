@@ -14,7 +14,7 @@ type CourseRepository interface {
 	FindByUserId(userId int) ([]domain.Course, error)
 	FindByCategory(categoryName string) ([]domain.Course, error)
 	FindAll() ([]domain.Course, error)
-	UsersEnrolled(userCourse domain.UserCourse) (domain.UserCourse, error)
+	UsersEnrolled(userCourse domain.UserCourse) domain.UserCourse
 	CountUsersEnrolled(courseId int) int
 	FindAllCourseIdByUserId(userId int) []string
 }

@@ -44,7 +44,7 @@ func (s *LessonTitleServiceImpl) Create(input web.LessonTitleCreateInput) web.Le
 
 	course := s.CourseService.FindById(input.CourseId)
 	if course.AuthorId != input.AuthorId {
-		panic(helper.NewUnauthorizedError("You're not an author for this courses"))
+		panic(helper.NewUnauthorizedError("You're not an author of this course"))
 	}
 
 	lessonTitle := s.LessonTitleRepository.Save(lt)

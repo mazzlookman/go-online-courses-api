@@ -23,7 +23,7 @@ func (s *CourseServiceImpl) FindAllCourseIdByUserId(userId int) []string {
 func (s *CourseServiceImpl) FindByCategory(categoryName string) []web.CourseResponse {
 	courses, err := s.CourseRepository.FindByCategory(categoryName)
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}
@@ -80,8 +80,7 @@ func (s *CourseServiceImpl) UserEnrolled(userId int, courseId int) domain.UserCo
 		UserId:   userId,
 	}
 
-	usersEnrolled, err := s.CourseRepository.UsersEnrolled(userCourse)
-	helper.PanicIfError(err)
+	usersEnrolled := s.CourseRepository.UsersEnrolled(userCourse)
 
 	return usersEnrolled
 }
@@ -89,7 +88,7 @@ func (s *CourseServiceImpl) UserEnrolled(userId int, courseId int) domain.UserCo
 func (s *CourseServiceImpl) FindAll() []web.CourseResponse {
 	courses, err := s.CourseRepository.FindAll()
 	if err != nil {
-		panic(helper.NewNotFoundError(errors.New("Courses is not found").Error()))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	coursesResponse := []web.CourseResponse{}

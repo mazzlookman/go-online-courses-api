@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"go-pzn-restful-api/model/web"
@@ -20,7 +19,7 @@ func (s *TransactionServiceImpl) PaymentProcess(midtransNotif web.TransactionNot
 	transactionId, _ := strconv.Atoi(split[0])
 	findById, err := s.TransactionRepository.FindById(transactionId)
 	if err != nil || findById.Id == 0 {
-		panic(helper.NewNotFoundError("Transaction not found"))
+		panic(helper.NewNotFoundError(err.Error()))
 	}
 
 	if midtransNotif.PaymentType == "credit_card" && midtransNotif.TransactionStatus == "capture" && midtransNotif.FraudStatus == "accept" {
@@ -32,8 +31,7 @@ func (s *TransactionServiceImpl) PaymentProcess(midtransNotif web.TransactionNot
 	}
 	findById.PaymentUrl = ""
 
-	update, err := s.TransactionRepository.Update(findById)
-	helper.PanicIfError(err)
+	update := s.TransactionRepository.Update(findById)
 
 	s.CourseService.UserEnrolled(update.UserId, update.CourseId)
 }
@@ -49,20 +47,14 @@ func (s *TransactionServiceImpl) Create(input web.CreateTransactionInput) web.Mi
 	transaction.Status = "pending"
 
 	// Save the transaction (no payment URL)
-	save, err := s.TransactionRepository.Save(transaction)
-	if err != nil {
-		panic(helper.NewBadRequestError(errors.New("Error to create transaction").Error()))
-	}
+	save := s.TransactionRepository.Save(transaction)
 
 	// Get payment URL
 	paymentResponse := helper.GetPaymentUrl(save, input.User)
 	save.PaymentUrl = paymentResponse[0]
 
 	// Update transaction with payment URL
-	update, err := s.TransactionRepository.Update(save)
-	if err != nil {
-		panic(helper.NewBadRequestError(errors.New("Error to create transaction").Error()))
-	}
+	update := s.TransactionRepository.Update(save)
 
 	return helper.ToMidtransTransactionResponse(update, paymentResponse[1])
 }

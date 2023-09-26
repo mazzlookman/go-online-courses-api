@@ -6,37 +6,35 @@ services:
     container_name: mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: go_pzn_restful_api
+      MYSQL_DATABASE: go_online_courses
     restart: always
 
-  pzn-api:
+  goc-api:
     depends_on:
       - mysql-db
     build:
       context: ./
       dockerfile: Dockerfile
-    environment:
-      DB_RUN : docker
     ports:
       - "2802:2802"
-    image: pzn-api:latest
-    container_name: pzn-api
+    image: goc-api:latest
+    container_name: goc-api
     restart: always
 
   localtunnel:
     depends_on:
-      - pzn-api
+      - goc-api
     image: efrecon/localtunnel
     container_name: localtunnel
     restart: always
     links:
-      - pzn-api
+      - goc-api
     command:
-      --local-host pzn-api --port 2802 --subdomain mazzlookman
+      --local-host goc-api --port 2802 --subdomain mazzlookman
 
 #  localtunnel:
 #    depends_on:
-#      - pzn-api
+#      - goc-api
 #    image: node:20-alpine
 #    command: >
 #      sh -c "npm install -g localtunnel &&
