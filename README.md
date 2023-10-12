@@ -1,11 +1,10 @@
 # Go Online Courses API
 
----
 ### Description
 
 ---
 This project is a RESTful API of online courses website inspired by [kelas.programmerzamannow.com](https://kelas.programmerzamannow.com/). 
-Here it is applied in a project "Go Online Courses API", which is made using Go-Lang and Gin Framework.
+Here it is applied in a project named "Go Online Courses API", which is made using Go-Lang and Gin Framework.
 This project implements `Clean Code`, `Integration Testing`, and `API Documentation`.
 
 ### Libraries and Tools Used
@@ -13,26 +12,13 @@ This project implements `Clean Code`, `Integration Testing`, and `API Documentat
 ---
 1. GORM: [gorm.io/gorm](https://github.com/go-gorm/gorm)
 2. Midtrans Payment Gateway: [github.com/veritrans/go-midtrans](https://github.com/veritrans/go-midtrans)
-3. JWT Authentication: [github.com/golang-jwt/jwt/v4](https://github.com/golang-jwt/jwt)
-4. Integration Testing: [github.com/stretchr/testify](https://github.com/stretchr/testify)
+3. Integration Testing: [github.com/stretchr/testify](https://github.com/stretchr/testify)
+4. JWT Authentication: [github.com/golang-jwt/jwt/v4](https://github.com/golang-jwt/jwt)
 5. Request Input Validation: [github.com/go-playground/validator/v10](https://github.com/go-playground/validator)
 6. FFmpeg: [gopkg.in/vansante/go-ffprobe.v2](https://github.com/vansante/go-ffprobe/tree/v2.1.1)
 7. Password Hashing (Bcrypt): [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto)
 8. HTTP Tunneling: [localtunnel.me](https://github.com/localtunnel/localtunnel)
 > The full details can be seen on `./go.mod`
-
-### Database Design
-
----
-![DB_DESIGN](https://ik.imagekit.io/mazzlookman/go_pzn_restful_api_diagram.png?updatedAt=1695427800586)
-Table Relationship:
-* `users` table has `many to many` relationship with `courses` table.
-* `authors` table has `one to many` relationship with `courses` table.
-* `categories` table has `many to many` relationship with `courses` table.
-* `courses` table has `one to many` relationship with `lesson_titles` table.
-* `lesson_titles` table has `one to many` relationship with `lesson_contents` table.
-* `transactions` table is `belongs to` `courses` table and `users` table.
-
 
 ### How To Run This Project ?
 
@@ -72,6 +58,18 @@ with `json` file format. If you want to get the UI display of this API Documenta
 > Which I know:
 > * Jetbrains: is automatically installed
 > * VSCode: it's "OpenAPI (Swagger) Editor". 
+
+### Database Design
+
+---
+![DB_DESIGN](https://ik.imagekit.io/mazzlookman/go_pzn_restful_api_diagram.png?updatedAt=1695427800586)
+Table Relationship:
+* `users` table has `many to many` relationship with `courses` table.
+* `authors` table has `one to many` relationship with `courses` table.
+* `categories` table has `many to many` relationship with `courses` table.
+* `courses` table has `one to many` relationship with `lesson_titles` table.
+* `lesson_titles` table has `one to many` relationship with `lesson_contents` table.
+* `transactions` table is `belongs to` `courses` table and `users` table.
 
 ### How To Contribute?
 
