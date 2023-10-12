@@ -50,16 +50,14 @@ func (s *LessonContentServiceImpl) Update(lcId int, input web.LessonContentUpdat
 	if input.Content != "" {
 		findById.Content = input.Content
 		findById.Duration = helper.GetLessonContentVideoDuration(input.Content)
-		lessonContent, err := s.LessonContentRepository.Update(findById)
-		helper.PanicIfError(err)
+		lessonContent := s.LessonContentRepository.Update(findById)
 		if oldContent != lessonContent.Content {
 			os.Remove(oldContent)
 		}
 		return helper.ToLessonContentResponse(lessonContent)
 	}
 
-	lessonContent, err := s.LessonContentRepository.Update(findById)
-	helper.PanicIfError(err)
+	lessonContent := s.LessonContentRepository.Update(findById)
 	return helper.ToLessonContentResponse(lessonContent)
 }
 
@@ -75,11 +73,11 @@ func (s *LessonContentServiceImpl) Create(input web.LessonContentCreateInput) we
 	lessonContent.InOrder = input.InOrder
 	lessonContent.Duration = helper.GetLessonContentVideoDuration(input.Content)
 
-	content, err := s.LessonContentRepository.Save(lessonContent)
-	if err != nil {
-		os.Remove(input.Content)
-		helper.PanicIfError(err)
-	}
+	content := s.LessonContentRepository.Save(lessonContent)
+	//if err != nil {
+	//	os.Remove(input.Content)
+	//	helper.PanicIfError(err)
+	//}
 
 	return helper.ToLessonContentResponse(content)
 }

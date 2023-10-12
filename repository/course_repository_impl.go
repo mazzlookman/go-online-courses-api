@@ -37,7 +37,7 @@ func (r *CourseRepositoryImpl) FindByCategory(categoryName string) ([]domain.Cou
 		Where("categories.id=?", category.Id).
 		Find(&courses).Error
 	if len(courses) == 0 || err != nil {
-		return nil, errors.New("Courses is not found")
+		return nil, errors.New("Courses not found")
 	}
 
 	return courses, nil
@@ -65,7 +65,7 @@ func (r *CourseRepositoryImpl) FindByUserId(userId int) ([]domain.Course, error)
 		Where("users.id=?", userId).
 		Find(&courses).Error
 	if len(courses) == 0 || err != nil {
-		return nil, errors.New("Courses is not found")
+		return nil, errors.New("Courses not found")
 	}
 	return courses, nil
 }
@@ -86,17 +86,17 @@ func (r *CourseRepositoryImpl) CountUsersEnrolled(courseId int) int {
 	return int(count)
 }
 
-func (r *CourseRepositoryImpl) UsersEnrolled(userCourse domain.UserCourse) (domain.UserCourse, error) {
+func (r *CourseRepositoryImpl) UsersEnrolled(userCourse domain.UserCourse) domain.UserCourse {
 	err := r.db.Create(&userCourse).Error
 	helper.PanicIfError(err)
-	return userCourse, nil
+	return userCourse
 }
 
 func (r *CourseRepositoryImpl) FindAll() ([]domain.Course, error) {
 	courses := []domain.Course{}
 	err := r.db.Find(&courses).Error
 	if len(courses) == 0 || err != nil {
-		return nil, errors.New("Courses is not found")
+		return nil, errors.New("Courses not found")
 	}
 
 	return courses, nil
@@ -106,7 +106,7 @@ func (r *CourseRepositoryImpl) FindByAuthorId(authorId int) ([]domain.Course, er
 	courses := []domain.Course{}
 	err := r.db.Find(&courses, "author_id=?", authorId).Error
 	if err != nil || len(courses) == 0 {
-		return nil, errors.New("Courses is not found")
+		return nil, errors.New("Courses not found")
 	}
 	return courses, nil
 }
@@ -115,7 +115,7 @@ func (r *CourseRepositoryImpl) FindBySlug(slug string) (domain.Course, error) {
 	course := domain.Course{}
 	err := r.db.Preload("Author").Find(&course, "slug=?", slug).Error
 	if course.Id == 0 || err != nil {
-		return course, errors.New("Course is not found")
+		return course, errors.New("Course not found")
 	}
 
 	return course, nil

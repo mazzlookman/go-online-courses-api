@@ -7,5 +7,5 @@ type AuthorRepository interface {
 	Update(author domain.Author) domain.Author
 	FindById(authorId int) (domain.Author, error)
 	FindByEmail(email string) (domain.Author, error)
-	Delete(email string) error
+	Delete(email string)
 }

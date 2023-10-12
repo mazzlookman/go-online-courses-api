@@ -92,10 +92,11 @@ func (c *LessonContentControllerImpl) Create(ctx *gin.Context) {
 	fileHeader, err := ctx.FormFile("content")
 	pathContent := fmt.Sprintf("assets/contents/%d-%s", courseId, fileHeader.Filename)
 	input.Content = pathContent
-	err = ctx.SaveUploadedFile(fileHeader, pathContent)
-	helper.PanicIfError(err)
 
 	lessonContentResponse := c.LessonContentService.Create(input)
+
+	err = ctx.SaveUploadedFile(fileHeader, pathContent)
+	helper.PanicIfError(err)
 
 	ctx.JSON(200,
 		helper.APIResponse(200, "Lesson content successfully created", lessonContentResponse),

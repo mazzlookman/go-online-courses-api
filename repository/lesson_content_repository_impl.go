@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"go-pzn-restful-api/helper"
 	"go-pzn-restful-api/model/domain"
 	"gorm.io/gorm"
 )
@@ -20,12 +21,11 @@ func (r *LessonContentRepositoryImpl) FindByLessonTitleId(ltId int) ([]domain.Le
 	return lessonContents, nil
 }
 
-func (r *LessonContentRepositoryImpl) Update(content domain.LessonContent) (domain.LessonContent, error) {
+func (r *LessonContentRepositoryImpl) Update(content domain.LessonContent) domain.LessonContent {
 	err := r.db.Save(&content).Error
-	if err != nil {
-		return content, errors.New("Failed to update lesson content")
-	}
-	return content, nil
+	helper.PanicIfError(err)
+
+	return content
 }
 
 func (r *LessonContentRepositoryImpl) FindById(lcId int) (domain.LessonContent, error) {
@@ -38,13 +38,11 @@ func (r *LessonContentRepositoryImpl) FindById(lcId int) (domain.LessonContent, 
 	return lc, nil
 }
 
-func (r *LessonContentRepositoryImpl) Save(content domain.LessonContent) (domain.LessonContent, error) {
+func (r *LessonContentRepositoryImpl) Save(content domain.LessonContent) domain.LessonContent {
 	err := r.db.Create(&content).Error
-	if err != nil {
-		return content, errors.New("Error to create a lesson content")
-	}
+	helper.PanicIfError(err)
 
-	return content, nil
+	return content
 }
 
 func NewLessonContentRepository(db *gorm.DB) LessonContentRepository {

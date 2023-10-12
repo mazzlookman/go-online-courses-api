@@ -14,8 +14,8 @@ type UserRepositoryImpl struct {
 func (r *UserRepositoryImpl) FindByEmail(email string) (domain.User, error) {
 	user := domain.User{}
 	err := r.db.Find(&user, "email=?", email).Error
-	if err != nil || user.Id == 0 {
-		return user, errors.New("User is not found")
+	if err != nil {
+		return user, errors.New("User not found")
 	}
 
 	return user, nil
@@ -39,18 +39,17 @@ func (r *UserRepositoryImpl) FindById(userId int) (domain.User, error) {
 	user := domain.User{}
 	err := r.db.Preload("Courses").Where("id=?", userId).Find(&user).Error
 	if err != nil || user.Id == 0 {
-		return user, errors.New("User is not found")
+		return user, errors.New("User not found")
 	}
 
 	return user, nil
 }
 
-func (r *UserRepositoryImpl) Delete(userName string) error {
+func (r *UserRepositoryImpl) Delete(userId int) {
 	user := domain.User{}
-	err := r.db.Where("name=?", userName).Delete(&user).Error
-	helper.PanicIfError(err)
+	err := r.db.Where("id=?", userId).Delete(&user).Error
 
-	return nil
+	helper.PanicIfError(err)
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
